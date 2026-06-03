@@ -1,3 +1,4 @@
+import { NavLink } from "react-router";
 export const HeroSection = () => {
   return (
     <section className="bg-white font-sans overflow-hidden">
@@ -24,22 +25,24 @@ export const HeroSection = () => {
 
           <div className="mt-10 flex items-center gap-8">
             {/* 1. Solid Minimal Button */}
-            <button
+            <NavLink
+              to={"/appointment"}
               className="px-8 py-3.5 bg-black text-white text-sm font-medium rounded-md hover:bg-pink-600 transition-colors duration-300 shadow-md cursor-pointer"
               /* यहाँ अपना onClick/Routing लॉजिक लगाएँ */
             >
               Book Appointment
-            </button>
+            </NavLink>
 
             {/* 2. Clean Underline Button */}
-            <button
+            <NavLink
+              to={"/shop"}
               className="group flex items-center gap-2 text-sm font-medium text-gray-900 hover:text-pink-600 transition-colors duration-300 cursor-pointer"
               /* यहाँ अपना onClick/Routing लॉजिक लगाएँ */
             >
               <span className="border-b border-black group-hover:border-pink-600 transition-colors pb-0.5">
                 Shop Cosmetics
               </span>
-            </button>
+            </NavLink>
           </div>
         </div>
 

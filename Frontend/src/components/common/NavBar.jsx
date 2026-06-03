@@ -1,7 +1,10 @@
+import { useState } from "react";
 import { NavLink } from "react-router-dom";
 import { CiSearch, CiUser, CiShoppingCart } from "react-icons/ci";
+import { SearchBar } from "./SearchBar";
 
 export const NavBar = () => {
+  const [isOpenSearch, setIsOpenSearch] = useState(false);
   const navLinks = [
     { to: "/", text: "Home" },
     { to: "/about-us", text: "About Us" },
@@ -39,12 +42,18 @@ export const NavBar = () => {
 
       {/* Right Action Icons Section */}
       <div className="flex items-center space-x-6">
-        <button className="text-gray-700 hover:text-pink-600 transition-colors p-1 cursor-pointer">
+        <button
+          onClick={() => setIsOpenSearch(!isOpenSearch)}
+          className="text-gray-700 hover:text-pink-600 transition-colors p-1 cursor-pointer"
+        >
           <CiSearch size={24} />
         </button>
-        <button className="text-gray-700 hover:text-pink-600 transition-colors p-1 cursor-pointer">
+        <NavLink
+          to={"/profile"}
+          className="text-gray-700 hover:text-pink-600 transition-colors p-1 cursor-pointer"
+        >
           <CiUser size={24} />
-        </button>
+        </NavLink>
 
         {/* Cart with badge */}
         <NavLink
@@ -65,6 +74,9 @@ export const NavBar = () => {
           Login
         </NavLink>
       </div>
+      {isOpenSearch && (
+        <SearchBar oncloseSerch={() => setIsOpenSearch(false)} />
+      )}
     </nav>
   );
 };

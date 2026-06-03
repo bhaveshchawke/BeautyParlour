@@ -1,3 +1,4 @@
+import { NavLink } from "react-router";
 export const AboutPage = () => {
   return (
     // पूरा पेज डार्क थीम में है (bg-[#0a0a0a])
@@ -136,18 +137,20 @@ export const AboutPage = () => {
           <span className="font-semibold">difference?</span>
         </h2>
         <div className="flex flex-col sm:flex-row justify-center items-center gap-4 mt-8">
-          <button
+          <NavLink
+            to={"/appointment"}
             className="px-8 py-3.5 bg-pink-600 text-white text-sm font-medium rounded-md hover:bg-pink-500 transition-colors duration-300 cursor-pointer"
             /* अपना लॉजिक लगाएँ */
           >
             Book an Appointment
-          </button>
-          <button
+          </NavLink>
+          <NavLink
+            to={"/shop"}
             className="px-8 py-3.5 bg-transparent border border-gray-600 text-white text-sm font-medium rounded-md hover:border-white transition-colors duration-300 cursor-pointer"
             /* अपना लॉजिक लगाएँ */
           >
             Explore Our Store
-          </button>
+          </NavLink>
         </div>
       </section>
     </div>
