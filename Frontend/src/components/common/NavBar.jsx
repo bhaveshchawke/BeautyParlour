@@ -1,5 +1,5 @@
 import { NavLink } from "react-router-dom";
-import { CiSearch, CiUser, CiHeart, CiShoppingCart } from "react-icons/ci";
+import { CiSearch, CiUser, CiShoppingCart } from "react-icons/ci";
 
 export const NavBar = () => {
   const navLinks = [
@@ -7,15 +7,17 @@ export const NavBar = () => {
     { to: "/about-us", text: "About Us" },
     { to: "/shop", text: "Shop" },
     { to: "/contact", text: "Contact" },
-    { to: "/apointment", text: "apointment" },
+    { to: "/appointment", text: "Appointment" },
   ];
 
   return (
     <nav className="bg-white text-black py-4 px-12 flex items-center justify-between border-b border-gray-100 shadow-sm font-sans">
       {/* Logo Section */}
       <NavLink to="/" className="text-black font-extrabold text-3xl">
-        <span className="text-4xl font-extrabold text-black">Beau</span>
-        <span className="text-4xl font-extrabold text-pink-600">Ten</span>
+        <span className="text-4xl font-extrabold text-black">Shree🏪</span>
+        <span className="text-4xl font-extrabold text-pink-600">
+          Sai Parlour
+        </span>
       </NavLink>
 
       {/* Navigation Links Section */}
@@ -26,7 +28,7 @@ export const NavBar = () => {
             to={link.to}
             className={({ isActive }) =>
               `flex items-center text-gray-800 hover:text-pink-600 transition-colors ${
-                isActive ? "text-pink-600 font-medium" : "font-normal"
+                isActive ? "text-pink-600" : ""
               }`
             }
           >
@@ -43,19 +45,25 @@ export const NavBar = () => {
         <button className="text-gray-700 hover:text-pink-600 transition-colors p-1 cursor-pointer">
           <CiUser size={24} />
         </button>
-        <button className="text-gray-700 hover:text-pink-600 transition-colors p-1 cursor-pointer">
-          <CiHeart size={24} />
-        </button>
 
         {/* Cart with badge */}
-        <div className="relative group cursor-pointer">
-          <button className="text-gray-700 hover:text-pink-600 transition-colors p-1">
-            <CiShoppingCart size={24} />
-          </button>
-          <span className="absolute -top-1.5 -right-2 bg-pink-600 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs font-semibold group-hover:bg-pink-700 transition-colors">
-            3
+        <NavLink
+          to="/cart"
+          className="relative text-gray-700 hover:text-pink-600 transition-colors p-1 group"
+        >
+          <CiShoppingCart size={24} />
+          <span className="absolute -top-1 -right-1 bg-pink-600 text-white rounded-full w-[18px] h-[18px] flex items-center justify-center text-[10px] font-bold group-hover:bg-pink-700 transition-colors pointer-events-none">
+            0
           </span>
-        </div>
+        </NavLink>
+
+        {/* Login Button */}
+        <NavLink
+          to="/login"
+          className="ml-4 bg-pink-600 text-white px-6 py-2 rounded-full font-medium hover:bg-pink-700 transition-colors shadow-sm"
+        >
+          Login
+        </NavLink>
       </div>
     </nav>
   );
