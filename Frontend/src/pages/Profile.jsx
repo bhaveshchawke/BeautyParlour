@@ -1,9 +1,26 @@
-import { useState } from "react";
-
+import { useState, useContext } from "react";
+import { AuthContext } from "../context/AuthContext";
+import { logoutUser } from "../services/AuthService";
+import { useMessage } from "../hooks/useMessage";
+import { useNavigate } from "react-router";
 export const Profile = () => {
+  const { showMessage } = useMessage();
+  const navigate = useNavigate();
   // Tabs के बीच स्विच करने के लिए State
   const [activeTab, setActiveTab] = useState("appointments");
-
+  // get user data from session //
+  const { user, logout } = useContext(AuthContext);
+  // for logout //
+  const handleLogout = async () => {
+    try {
+      await logoutUser();
+      logout();
+      showMessage("Logged out successfully", "error");
+      // navigate("/");
+    } catch (error) {
+      showMessage("Failed to logout!", "error");
+    }
+  };
   return (
     // Deep Dark Background for the whole page
     <div className="bg-[#0a0a0a] min-h-screen font-sans py-12 lg:py-20 text-gray-300">
@@ -26,14 +43,14 @@ export const Profile = () => {
 
               {/* Avatar (Initials) */}
               <div className="w-20 h-20 bg-pink-600/10 border border-pink-500/30 rounded-full flex items-center justify-center text-2xl font-medium text-pink-500 mb-4 shadow-[0_0_15px_rgba(219,39,119,0.2)]">
-                BC
+                {user?.name ? user.name[0].toUpperCase() : "U"}
               </div>
 
               <h2 className="text-lg font-medium text-white mb-1">
-                Bhavesh Chawke
+                {user?.name ? user.name : "User"}
               </h2>
               <p className="text-xs font-light text-gray-400 mb-4">
-                bhavesh.c@example.com
+                {user?.name ? user.email : "example@gmail.com"}
               </p>
 
               <span className="px-3 py-1 bg-white/5 border border-white/10 rounded-full text-[10px] uppercase tracking-widest text-pink-400 font-medium flex items-center gap-2">
@@ -71,7 +88,10 @@ export const Profile = () => {
 
               <div className="h-px bg-white/10 my-2 mx-4"></div>
 
-              <button className="w-full flex items-center gap-4 px-6 py-4 text-sm text-red-400 hover:bg-red-500/10 hover:text-red-300 transition-all cursor-pointer">
+              <button
+                onClick={handleLogout}
+                className="w-full flex items-center gap-4 px-6 py-4 text-sm text-red-400 hover:bg-red-500/10 hover:text-red-300 transition-all cursor-pointer"
+              >
                 🚪 Log Out
               </button>
             </div>

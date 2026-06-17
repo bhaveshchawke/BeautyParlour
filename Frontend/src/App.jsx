@@ -9,7 +9,7 @@ import { Register } from "./pages/Register";
 import { ApointMent } from "./pages/ApointMent";
 import { Cart } from "./pages/Cart";
 import { Profile } from "./pages/Profile";
-
+import { ProtectedRoute } from "./components/common/ProtectedRoute";
 function App() {
   return (
     <>
@@ -22,8 +22,22 @@ function App() {
           <Route path="appointment" element={<ApointMent />} />
           <Route path="login" element={<Login />} />
           <Route path="register" element={<Register />} />
-          <Route path="cart" element={<Cart />} />
-          <Route path="profile" element={<Profile />} />
+          <Route
+            path="cart"
+            element={
+              <ProtectedRoute>
+                <Cart />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="profile"
+            element={
+              <ProtectedRoute>
+                <Profile />
+              </ProtectedRoute>
+            }
+          />
         </Route>
       </Routes>
     </>

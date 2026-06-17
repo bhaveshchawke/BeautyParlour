@@ -2,9 +2,15 @@ import { useState } from "react";
 import { NavLink } from "react-router-dom";
 import { CiSearch, CiUser, CiShoppingCart } from "react-icons/ci";
 import { SearchBar } from "./SearchBar";
-
+import { useContext } from "react";
+import { AuthContext } from "../../context/AuthContext";
+import { Loader } from "../common/Loader";
+import { logoutUser } from "../../services/AuthService";
+import { useMessage } from "../../hooks/useMessage";
 export const NavBar = () => {
   const [isOpenSearch, setIsOpenSearch] = useState(false);
+  const { user, isLoading } = useContext(AuthContext);
+  const { showMessage } = useMessage();
   const navLinks = [
     { to: "/", text: "Home" },
     { to: "/about-us", text: "About Us" },
@@ -12,6 +18,15 @@ export const NavBar = () => {
     { to: "/contact", text: "Contact" },
     { to: "/appointment", text: "Appointment" },
   ];
+  const handleLogout = async () => {
+    try {
+      await logoutUser();
+      showMessage("Logged out successfully", "error");
+      window.location.reload();
+    } catch (error) {
+      showMessage("Failed to logout!", "error");
+    }
+  };
 
   return (
     <nav className="bg-white text-black py-4 px-12 flex items-center justify-between border-b border-gray-100 shadow-sm font-sans">
@@ -67,12 +82,31 @@ export const NavBar = () => {
         </NavLink>
 
         {/* Login Button */}
-        <NavLink
-          to="/login"
-          className="ml-4 bg-pink-600 text-white px-6 py-2 rounded-full font-medium hover:bg-pink-700 transition-colors shadow-sm"
-        >
-          Login
-        </NavLink>
+        {/* User Auth Section (Login / Loader / User Profile) */}
+        {isLoading ? (
+          <div className="ml-4 flex items-center justify-center w-24 h-10">
+            <Loader />
+          </div>
+        ) : user ? (
+          // Agar user login hai, toh uska naam aur Logout dikhao
+          <div className="flex items-center gap-4 ml-4">
+            <span className="font-medium text-gray-700">Hi, {user.name}</span>
+            <button
+              onClick={handleLogout}
+              className="bg-red-500 text-white px-4 py-2 rounded-full font-medium hover:bg-red-600 transition-colors shadow-sm cursor-pointer text-sm"
+            >
+              Logout
+            </button>
+          </div>
+        ) : (
+          // Agar user login nahi hai, toh Login button dikhao
+          <NavLink
+            to="/login"
+            className="ml-4 bg-pink-600 text-white px-6 py-2 rounded-full font-medium hover:bg-pink-700 transition-colors shadow-sm"
+          >
+            Login
+          </NavLink>
+        )}
       </div>
       {isOpenSearch && (
         <SearchBar oncloseSerch={() => setIsOpenSearch(false)} />

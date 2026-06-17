@@ -77,10 +77,15 @@ export const Register = () => {
       newErrors.email = "Invalid email format";
     }
 
+    const passwordRegex =
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#^-])[A-Za-z\d@$!%*?&#^-]{8,}$/;
     if (!userData.password.trim()) {
-      newErrors.password = "Please Enter password!";
-    } else if (userData.password.length < 6) {
-      newErrors.password = "Password must be at least 6 characters";
+      newErrors.password = "Password is required";
+    } else if (userData.password.trim().length < 8) {
+      newErrors.password = "Password must be at least 8 characters";
+    } else if (!passwordRegex.test(userData.password)) {
+      newErrors.password =
+        "Must contain uppercase, lowercase, number & special character.";
     }
 
     if (!userData.confirmPassword.trim()) {
@@ -139,10 +144,10 @@ export const Register = () => {
         return;
       }
 
-      showMessage("OTP validated successfully!", "success");
+      showMessage("Registration successful! You are now logged in.", "success");
       setTimeLeft(0);
 
-      navigate("/login");
+      navigate("/");
     } catch (error) {
       if (timeLeft === 0) {
         showMessage(" OTP expired", "error");
