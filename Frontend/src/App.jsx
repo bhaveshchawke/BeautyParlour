@@ -10,6 +10,7 @@ import { ApointMent } from "./pages/ApointMent";
 import { Cart } from "./pages/Cart";
 import { Profile } from "./pages/Profile";
 import { ProtectedRoute } from "./components/common/ProtectedRoute";
+import { AppointmentDetail } from "./pages/AppointmentDetail";
 function App() {
   return (
     <>
@@ -27,6 +28,14 @@ function App() {
             element={
               <ProtectedRoute>
                 <Cart />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="profile/appointmentdetail/:id"
+            element={
+              <ProtectedRoute>
+                <AppointmentDetail />
               </ProtectedRoute>
             }
           />

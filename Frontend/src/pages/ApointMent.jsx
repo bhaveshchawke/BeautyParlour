@@ -1,5 +1,9 @@
+import { useState } from "react";
+import { sendApintmentToBacekend } from "../services/AppointmentService";
+import { useMessage } from "../hooks/useMessage";
+import { Loader } from "../components/common/Loader";
 export const ApointMent = () => {
-  // डमी टाइम स्लॉट्स (इन्हें आप बैकएंड से डायनामिक बना सकते हैं)
+  const { showMessage } = useMessage();
   const timeSlots = [
     "10:00 AM",
     "11:00 AM",
@@ -10,7 +14,6 @@ export const ApointMent = () => {
     "06:30 PM",
   ];
 
-  // डमी सर्विसेज़
   const services = [
     "Hair Styling & Spa",
     "Advanced Skin Care",
@@ -18,6 +21,101 @@ export const ApointMent = () => {
     "Nail Art & Extensions",
     "Relaxing Massage Therapy",
   ];
+  const [data, setData] = useState({
+    selecteService: "",
+    selecteDate: "",
+    selecteSlot: "",
+    fullName: "",
+    phone: "",
+  });
+
+  //newError state//
+  const [newError, setNewError] = useState({});
+
+  // ✅ FIX 1: Universal Handler for Inputs & Selects
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+  // ✅ FIX 2: Custom Handler for Time Slot Divs
+  const handleSlotClick = (time) => {
+    setData((prev) => ({
+      ...prev,
+      selecteSlot: time,
+    }));
+  };
+  //loading state//
+  const [isLoading, setIsLoading] = useState(false);
+  const handleErrors = () => {
+    //for error handling
+    const newErrors = {};
+
+    if (!data.selecteService) {
+      newErrors.selecteServiceError = "Please select a service";
+    }
+
+    if (!data.selecteDate) {
+      newErrors.dateError = "Please select a date";
+    }
+
+    //for emtpy time slot //
+    if (!data.selecteSlot) {
+      newErrors.timeSlotError = "Time slot is required!";
+    }
+    //for empty userName//
+    if (!data.fullName) {
+      newErrors.fullNameError = "fullName is required!";
+    }
+    //for phone number//
+    const phoneRegex = /^[6-9]\d{9}$/;
+    if (!phoneRegex.test(data.phone)) {
+      newErrors.phoneError = "Invalid contact number";
+    }
+    //adding errors in state//
+    setNewError(newErrors);
+    //return if error exist//
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    let isValid = handleErrors();
+    //if the handle error fun return zero errors//
+    if (isValid) {
+      try {
+        // Map frontend state to match the backend model schema exactly
+        const payload = {
+          service: data.selecteService,
+          date: data.selecteDate,
+          timeSlot: data.selecteSlot,
+          fullName: data.fullName,
+          phone: data.phone,
+        };
+        setIsLoading(true);
+        const response = await sendApintmentToBacekend(payload);
+        showMessage(response.message, "success");
+        setIsLoading(false);
+
+        // Clear form after success
+        setData({
+          selecteService: "",
+          selecteDate: "",
+          selecteSlot: "",
+          fullName: "",
+          phone: "",
+        });
+      } catch (error) {
+        console.error(error);
+        showMessage(error.message, "error");
+        setIsLoading(false);
+      }
+    } else {
+      showMessage("Please fill all required fields", "error");
+    }
+  };
 
   return (
     <div className="bg-stone-50 min-h-screen font-sans pb-24">
@@ -105,7 +203,7 @@ export const ApointMent = () => {
             </h3>
 
             {/* यहाँ आप अपना onSubmit लॉजिक लगाएंगे */}
-            <form className="flex flex-col gap-10">
+            <form className="flex flex-col gap-10" onSubmit={handleSubmit}>
               {/* 1. Select Service */}
               <div>
                 <label className="text-xs font-semibold text-gray-900 uppercase tracking-widest mb-4 block">
@@ -113,10 +211,12 @@ export const ApointMent = () => {
                 </label>
                 <div className="relative">
                   <select
+                    onChange={handleInputChange}
+                    name="selecteService"
+                    value={data.selecteService}
                     className="w-full pb-3 border-b border-gray-300 bg-transparent text-gray-900 text-sm focus:outline-none focus:border-pink-600 transition-colors appearance-none cursor-pointer"
-                    /* onChange={(e) => setService(e.target.value)} */
                   >
-                    <option value="" disabled selected>
+                    <option value="" disabled>
                       Choose a premium service...
                     </option>
                     {services.map((srv, idx) => (
@@ -130,6 +230,10 @@ export const ApointMent = () => {
                     ▼
                   </div>
                 </div>
+                {/* 🎨 SERVICE ERROR DIV STYLED HERE */}
+                <div className="text-[10px] text-red-500 font-medium mt-1">
+                  {newError.selecteServiceError}
+                </div>
               </div>
 
               {/* 2. Select Date */}
@@ -139,9 +243,15 @@ export const ApointMent = () => {
                 </label>
                 <input
                   type="date"
+                  name="selecteDate"
+                  value={data.selecteDate}
+                  onChange={handleInputChange}
                   className="w-full pb-3 border-b border-gray-300 bg-transparent text-gray-900 text-sm focus:outline-none focus:border-pink-600 transition-colors cursor-pointer"
-                  /* onChange={(e) => setDate(e.target.value)} */
                 />
+                {/* 🎨 DATE ERROR DIV STYLED HERE */}
+                <div className="text-[10px] text-red-500 font-medium mt-1">
+                  {newError.dateError}
+                </div>
               </div>
 
               {/* 3. Select Time Slot (Clickable Pills) */}
@@ -153,12 +263,21 @@ export const ApointMent = () => {
                   {timeSlots.map((time, idx) => (
                     <div
                       key={idx}
-                      className="px-5 py-2.5 border border-gray-200 rounded-lg text-sm text-gray-600 font-medium cursor-pointer hover:border-pink-600 hover:text-pink-600 transition-all duration-300"
-                      /* onClick={() => setTimeSlot(time)} (आप सिलेक्टेड वाले को bg-pink-600 और text-white कर सकते हैं) */
+                      onClick={() => handleSlotClick(time)}
+                      className={`px-5 py-2.5 border rounded-lg text-sm font-medium cursor-pointer transition-all duration-300
+                        ${
+                          data.selecteSlot === time
+                            ? "border-pink-600 bg-pink-600 text-white"
+                            : "border-gray-200 text-gray-600 hover:border-pink-600 hover:text-pink-600"
+                        }`}
                     >
                       {time}
                     </div>
                   ))}
+                </div>
+                {/* 🎨 TIME SLOT ERROR DIV STYLED HERE */}
+                <div className="text-[10px] text-red-500 font-medium mt-2">
+                  {newError.timeSlotError}
                 </div>
               </div>
 
@@ -168,6 +287,9 @@ export const ApointMent = () => {
                   <input
                     type="text"
                     id="fullName"
+                    name="fullName"
+                    value={data.fullName}
+                    onChange={handleInputChange}
                     required
                     className="w-full pb-3 border-b border-gray-300 bg-transparent text-gray-900 text-sm focus:outline-none focus:border-pink-600 transition-colors peer"
                     placeholder=" "
@@ -178,12 +300,19 @@ export const ApointMent = () => {
                   >
                     Full Name
                   </label>
+                  {/* 🎨 FULL NAME ERROR DIV STYLED HERE */}
+                  <div className="absolute -bottom-5 left-0 text-[10px] text-red-500 font-medium">
+                    {newError.fullNameError}
+                  </div>
                 </div>
 
                 <div className="w-full relative group">
                   <input
                     type="tel"
                     id="phone"
+                    name="phone"
+                    value={data.phone}
+                    onChange={handleInputChange}
                     required
                     className="w-full pb-3 border-b border-gray-300 bg-transparent text-gray-900 text-sm focus:outline-none focus:border-pink-600 transition-colors peer"
                     placeholder=" "
@@ -194,15 +323,25 @@ export const ApointMent = () => {
                   >
                     Phone Number
                   </label>
+                  {/* 🎨 PHONE ERROR DIV STYLED HERE */}
+                  <div className="absolute -bottom-5 left-0 text-[10px] text-red-500 font-medium">
+                    {newError.phoneError}
+                  </div>
                 </div>
               </div>
 
               {/* Submit Button */}
               <button
                 type="submit"
-                className="w-full mt-4 px-10 py-4 bg-black text-white text-sm font-medium rounded-lg hover:bg-pink-600 hover:shadow-[0_10px_20px_-10px_rgba(219,39,119,0.5)] transition-all duration-300 cursor-pointer flex justify-center items-center gap-2"
+                disabled={isLoading}
+                className={`w-full mt-4 px-10 py-4 text-white text-sm font-medium rounded-lg flex justify-center items-center gap-2 transition-all duration-300
+    ${
+      isLoading
+        ? "bg-gray-400 cursor-not-allowed"
+        : "bg-black hover:bg-pink-600 hover:shadow-[0_10px_20px_-10px_rgba(219,39,119,0.5)] cursor-pointer"
+    }`}
               >
-                Confirm Appointment <span>→</span>
+                {isLoading ? <Loader /> : "Confirm Appointment"} <span>→</span>
               </button>
             </form>
           </div>

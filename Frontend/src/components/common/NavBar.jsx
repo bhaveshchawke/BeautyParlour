@@ -29,7 +29,7 @@ export const NavBar = () => {
   };
 
   return (
-    <nav className="bg-white text-black py-4 px-12 flex items-center justify-between border-b border-gray-100 shadow-sm font-sans">
+    <nav className="fixed top-0 left-0 w-full z-50 bg-white text-black py-4 px-12 flex items-center justify-between border-b border-gray-100 shadow-sm font-sans">
       {/* Logo Section */}
       <NavLink to="/" className="text-black font-extrabold text-3xl">
         <span className="text-4xl font-extrabold text-black">Shree🏪</span>

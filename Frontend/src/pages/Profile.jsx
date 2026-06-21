@@ -1,14 +1,22 @@
-import { useState, useContext } from "react";
+import { useState, useContext, useEffect } from "react";
 import { AuthContext } from "../context/AuthContext";
 import { logoutUser } from "../services/AuthService";
 import { useMessage } from "../hooks/useMessage";
-import { useNavigate } from "react-router";
+import { getApointmentDataFromBackend } from "../services/AppointmentService";
+import { Link } from "react-router";
+import { ReShedule } from "../components/specific/ReShedule";
+import { AppointmentSkeleton } from "../components/common/AppointmentSkeleton";
+
 export const Profile = () => {
   const { showMessage } = useMessage();
-  const navigate = useNavigate();
-  // Tabs के बीच स्विच करने के लिए State
+  //for loader//
+  const [isLoading, setIsLoading] = useState(true);
+  //for active tabs //
   const [activeTab, setActiveTab] = useState("appointments");
-  // get user data from session //
+  //for set apointments //
+  const [apointments, setApointments] = useState([]);
+  //for popUp resheduleBar //
+  const [rescheduleId, setRescheduleId] = useState(null); // get user data from session //
   const { user, logout } = useContext(AuthContext);
   // for logout //
   const handleLogout = async () => {
@@ -21,6 +29,56 @@ export const Profile = () => {
       showMessage("Failed to logout!", "error");
     }
   };
+
+  // for updating appointment after resheduling //
+  const handleRescheduleSuccess = (updatedAppointment) => {
+    setApointments((prevApointments) =>
+      prevApointments.map((apt) =>
+        apt._id === updatedAppointment._id ? updatedAppointment : apt,
+      ),
+    );
+    setRescheduleId(null);
+  };
+  useEffect(() => {
+    const handleApointment = async () => {
+      try {
+        setIsLoading(true);
+        const response = await getApointmentDataFromBackend();
+        if (response && response.success && response.data) {
+          setApointments(response.data);
+          setIsLoading(false);
+        }
+      } catch (error) {
+        showMessage(error, "error");
+        setIsLoading(false);
+      }
+    };
+    handleApointment();
+  }, []);
+
+  // Helper function to get styles based on status
+  const getStatusStyles = (status) => {
+    switch (status?.toLowerCase()) {
+      case "cancelled":
+        return {
+          badge: "bg-red-500/10 text-red-400 border border-red-500/20",
+          cardBg: "bg-red-950/10 border-red-500/30",
+        };
+      case "completed":
+      case "confirmed":
+        return {
+          badge: "bg-green-500/10 text-green-400 border border-green-500/20",
+          cardBg: "bg-green-950/10 border-green-500/30",
+        };
+      case "pending":
+      default:
+        return {
+          badge: "bg-yellow-500/10 text-yellow-400 border border-yellow-500/20",
+          cardBg: "bg-[#121212] border-white/5",
+        };
+    }
+  };
+
   return (
     // Deep Dark Background for the whole page
     <div className="bg-[#0a0a0a] min-h-screen font-sans py-12 lg:py-20 text-gray-300">
@@ -101,45 +159,93 @@ export const Profile = () => {
           <div className="w-full lg:w-3/4">
             {/* 1. Appointments View */}
             {activeTab === "appointments" && (
-              <div className="animate-fade-in">
+              <>
                 <h3 className="text-xl font-light text-white mb-6">
                   Upcoming <span className="font-semibold">Appointments</span>
                 </h3>
-
-                {/* Single Appointment Card */}
-                <div className="bg-[#121212] rounded-2xl border border-white/5 p-6 flex flex-col md:flex-row md:items-center justify-between gap-6 hover:border-pink-500/30 transition-colors">
-                  <div className="flex gap-6 items-center">
-                    {/* Date Block */}
-                    <div className="w-16 h-16 rounded-xl bg-white/5 border border-white/10 flex flex-col items-center justify-center flex-shrink-0">
-                      <span className="text-xs text-pink-500 font-semibold uppercase">
-                        Oct
-                      </span>
-                      <span className="text-xl font-light text-white">24</span>
+                {isLoading && (
+                  <>
+                    <AppointmentSkeleton />
+                    <AppointmentSkeleton />
+                    <AppointmentSkeleton />
+                  </>
+                )}
+                {!isLoading && apointments.length === 0 && (
+                  <div className="bg-[#121212] rounded-2xl border border-white/5 p-10 text-center flex flex-col items-center justify-center m-4 animate-fade-in">
+                    <div className="w-16 h-16 bg-pink-500/10 rounded-full flex items-center justify-center text-2xl mb-4 shadow-[0_0_15px_rgba(236,72,153,0.2)]">
+                      📅
                     </div>
-                    {/* Details */}
-                    <div>
-                      <h4 className="text-base font-medium text-white mb-1">
-                        Advanced Hair Spa & Styling
-                      </h4>
-                      <p className="text-sm text-gray-400 font-light mb-2">
-                        10:30 AM • Expert Stylist
-                      </p>
-                      <span className="inline-block px-2.5 py-1 bg-green-500/10 text-green-400 text-[10px] uppercase tracking-wider rounded-md font-medium">
-                        Confirmed
-                      </span>
-                    </div>
+                    <h4 className="text-lg font-medium text-white mb-2">No Appointments Yet</h4>
+                    <p className="text-sm text-gray-400 font-light mb-6 max-w-sm">
+                      You haven't booked any services yet. Treat yourself to a premium salon experience!
+                    </p>
+                    <Link to="/appointment" className="px-6 py-2.5 bg-pink-500 text-white text-sm font-medium rounded-lg hover:bg-pink-600 transition-colors shadow-[0_0_15px_rgba(236,72,153,0.3)]">
+                      Book Now
+                    </Link>
                   </div>
-                  {/* Actions */}
-                  <div className="flex gap-3">
-                    <button className="px-4 py-2 border border-white/10 text-gray-300 text-xs font-medium rounded-lg hover:bg-white/5 transition-colors cursor-pointer">
-                      Reschedule
-                    </button>
-                    <button className="px-4 py-2 bg-pink-600/10 text-pink-500 border border-pink-500/20 text-xs font-medium rounded-lg hover:bg-pink-600 hover:text-white transition-all cursor-pointer">
-                      View Details
-                    </button>
-                  </div>
-                </div>
-              </div>
+                )}
+                {!isLoading && apointments.length > 0 && apointments.map((apointment) => {
+                    const statusStyles = getStatusStyles(apointment.status);
+                    return (
+                      <div key={apointment._id} className="animate-fade-in m-4">
+                        {/* Single Appointment Card */}
+                        <div
+                          className={`rounded-2xl border p-6 flex flex-col md:flex-row md:items-center justify-between gap-6 hover:border-pink-500/30 transition-colors ${statusStyles.cardBg}`}
+                        >
+                          <div className="flex gap-6 items-center">
+                            {/* Date Block */}
+                            <div className="w-26 h-16 p-1 rounded-xl bg-white/5 border border-white/10 flex flex-col items-center justify-center flex-shrink-0 text-center">
+                              <span className="text-[10px] text-pink-500 font-semibold uppercase ">
+                                Date
+                              </span>
+                              <span className="text-xs font-light text-white leading-tight">
+                                {apointment.date || "N/A"}
+                              </span>
+                            </div>
+                            {/* Details */}
+                            <div>
+                              <h4 className="text-base font-medium text-white mb-1">
+                                {apointment.service || "Premium Service"}
+                              </h4>
+                              <p className="text-sm text-gray-400 font-light mb-2">
+                                {apointment.timeSlot || "Time TBD"} • Expert
+                                Stylist
+                              </p>
+                              <span
+                                className={`inline-block px-2.5 py-1 text-[10px] uppercase tracking-wider rounded-md font-medium ${statusStyles.badge}`}
+                              >
+                                {apointment.status || "Pending"}
+                              </span>
+                            </div>
+                          </div>
+                          {/* Actions */}
+                          <div className="flex gap-3">
+                            <button
+                              onClick={() => setRescheduleId(apointment._id)}
+                              disabled={apointment.status === "cancelled"}
+                              className="px-4 py-2 border border-white/10 text-gray-300 text-xs font-medium rounded-lg hover:bg-white/5 transition-colors cursor-pointer"
+                            >
+                              Reschedule
+                            </button>
+                            <Link
+                              to={`/profile/appointmentdetail/${apointment._id}`}
+                              className="px-4 py-2 bg-pink-600/10 text-pink-500 border border-pink-500/20 text-xs font-medium rounded-lg hover:bg-pink-600 hover:text-white transition-all cursor-pointer"
+                            >
+                              View Details
+                            </Link>
+                          </div>
+                          {rescheduleId === apointment._id && (
+                            <ReShedule
+                              onClose={() => setRescheduleId(null)}
+                              appointmentId={apointment._id}
+                              onSuccess={handleRescheduleSuccess}
+                            />
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })}
+              </>
             )}
 
             {/* 2. Orders View */}

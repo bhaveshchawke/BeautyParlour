@@ -32,8 +32,19 @@ const registerLimiter = rateLimit({
   standardHeaders: true,
   legacyHeaders: false,
 });
+//rate limiter for booking apointment
+const bookingLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes ka window
+  max: 3, // Har IP ko 15 min mein max 3 bookings allow karna
+  message: {
+    error: "Maximum Booking Limit! please try after 15 minutes.",
+  },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
 module.exports = {
   loginLimiter,
   otpLimiter,
   registerLimiter,
+  bookingLimiter,
 };

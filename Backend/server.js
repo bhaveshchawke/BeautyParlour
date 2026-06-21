@@ -31,9 +31,11 @@ server.use(
 );
 //routes import//
 const authRoute = require("./Routes/authRoute");
+const appointmentRoute = require("./Routes/appointmentRoute");
 
 //route use//
 server.use("/api/auth", authRoute);
+server.use("/api/appointment", appointmentRoute);
 
 const PORT = process.env.PORT || 3000;
 
