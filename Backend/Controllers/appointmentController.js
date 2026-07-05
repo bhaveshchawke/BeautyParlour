@@ -1,4 +1,5 @@
 const appointmentModel = require("../Models/apointmentModel");
+//__getAppointmetFromUi___________________________________________
 const getAppointmentInfo = async (req, res) => {
   const { service, date, timeSlot, fullName, phone } = req.body;
   try {
@@ -108,10 +109,31 @@ const cancelAppointment = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
+//send all apointments to ui//
+const getAllAppointments = async (req, res) => {
+  try {
+    const response = await appointmentModel.find({});
+    if (!response) {
+      return res.status(400).json({
+        error: "Something went wrong!",
+      });
+    }
+    res.status(200).json({
+      message: "all apointments fetched...",
+      data: response,
+    });
+  } catch (error) {
+    res.status(400).json({
+      error: error.message,
+    });
+    console.log(error);
+  }
+};
 module.exports = {
   getAppointmentInfo,
   sendAppointmentInfo,
   getAppointmentById,
   reshedule,
   cancelAppointment,
+  getAllAppointments,
 };

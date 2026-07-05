@@ -66,18 +66,20 @@ const verifyOtp = async (req, res) => {
     if (!validOtp) {
       return res.status(400).json({ message: "Invalid or expired OTP" });
     }
-
-    // ✅ SUCCESS: Ab Database me us saved user ko find karo aur 'isVerified: true' kardo!
+    let updateData = { isVerified: true };
+    if (email === process.env.ADMIN_EMAIL) {
+      updateData.isAdmin = true;
+    }
+    //if user in Admin //
     const updatedUser = await userModel.findOneAndUpdate(
       { email },
-      { isVerified: true },
+      updateData,
       { new: true }, // Ye updated user return karega
     );
 
     if (!updatedUser) {
       return res.status(400).json({ error: "User not found in database!" });
     }
-
     // ✅ STANDARD 1: Replay attack se bachne ke liye Use hote hi OTP DELETE kar do!
     await otpModel.deleteOne({ email });
 
@@ -85,10 +87,17 @@ const verifyOtp = async (req, res) => {
     req.session.userId = updatedUser._id;
     req.session.userName = updatedUser.userName;
     req.session.email = updatedUser.email;
+    req.session.isAdmin = updatedUser.isAdmin;
 
-    res
-      .status(200)
-      .json({ message: "Registration Successful! You are now Logged In." });
+    res.status(200).json({
+      message: "Registration Successful! You are now Logged In.",
+      user: {
+        id: updatedUser._id,
+        name: updatedUser.userName,
+        email: updatedUser.email,
+        isAdmin: updatedUser.isAdmin,
+      },
+    });
   } catch (error) {
     res.status(500).json({ error: "Something went wrong. Please try again." });
   }
@@ -114,8 +123,15 @@ const getlogindata = async (req, res) => {
     req.session.userId = user._id;
     req.session.userName = user.userName;
     req.session.email = user.email;
+    req.session.isAdmin = user.isAdmin;
     return res.status(200).json({
       message: `You are LoggedIn welocome: ${req.session.userName}`,
+      user: {
+        id: user._id,
+        name: user.userName,
+        email: user.email,
+        isAdmin: user.isAdmin,
+      },
     });
   } catch (err) {
     return res.status(401).json({
@@ -133,6 +149,7 @@ const getMe = async (req, res) => {
         id: req.session.userId,
         name: req.session.userName,
         email: req.session.email,
+        isAdmin: req.session.isAdmin,
       },
     });
   } catch (error) {
@@ -153,6 +170,9 @@ const logout = async (req, res) => {
     return res.status(200).json({ message: "Logout successful" });
   });
 };
+
+//check is Admin//
+
 module.exports = {
   getRegisterPageData,
   verifyOtp,

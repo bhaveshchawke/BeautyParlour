@@ -1,6 +1,7 @@
 const express = require("express");
 const appointmentController = require("../Controllers/appointmentController");
 const isAuth = require("../Middlewares/isAuth"); // ✅ isAuth Import kiya
+const isAdmin = require("../Middlewares/isAdmin");
 const rateLimiter = require("../Middlewares/rateLimiter");
 
 const appointmentRoute = express.Router();
@@ -24,6 +25,12 @@ appointmentRoute.post(
   "/cancel",
   isAuth,
   appointmentController.cancelAppointment,
+);
+appointmentRoute.post(
+  "/getAll",
+  isAuth,
+  isAdmin,
+  appointmentController.getAllAppointments,
 );
 
 module.exports = appointmentRoute;

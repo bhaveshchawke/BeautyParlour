@@ -1,35 +1,26 @@
 import { ServiceCard } from "./ServiceCard";
-
+import { getAllServies } from "../../services/AdminService";
+import { useEffect, useState } from "react";
+import { Link } from "react-router";
 export const Services = () => {
-  const servicesData = [
-    {
-      id: 1,
-      title: "Hair Styling & Spa",
-      description:
-        "Expert cuts, coloring, and deep conditioning spa treatments for a flawless look.",
-      price: "₹499",
-      image:
-        "https://images.pexels.com/photos/3993444/pexels-photo-3993444.jpeg?auto=compress&cs=tinysrgb&w=800",
-    },
-    {
-      id: 2,
-      title: "Advanced Skin Care",
-      description:
-        "Rejuvenating facials and skin treatments using premium, dermatologist-tested products.",
-      price: "₹899",
-      image:
-        "https://images.pexels.com/photos/3993322/pexels-photo-3993322.jpeg?auto=compress&cs=tinysrgb&w=800",
-    },
-    {
-      id: 3,
-      title: "Bridal & Party Makeup",
-      description:
-        "HD and airbrush makeup by professional artists to make your special day unforgettable.",
-      price: "₹2499",
-      image:
-        "https://images.pexels.com/photos/2442904/pexels-photo-2442904.jpeg?auto=compress&cs=tinysrgb&w=800",
-    },
-  ];
+  //__state-for-serices_______________________________________
+  const [servicesData, setServicesData] = useState([]);
+  //__func for getting services_______________________________________________
+  useEffect(() => {
+    const getServices = async () => {
+      try {
+        const response = await getAllServies();
+        if (response && response.data) {
+          const activeServicesOnly = response.data.filter(service => service.active === true);
+          setServicesData(activeServicesOnly);
+        }
+      } catch (error) {
+        setServicesData([]);
+      }
+    };
+    getServices();
+  }, []);
+  console.log(servicesData);
 
   return (
     <section className="bg-white font-sans py-20 lg:py-28">
@@ -51,22 +42,20 @@ export const Services = () => {
           </div>
 
           {/* View All Button */}
-          <button className="group flex items-center gap-2 text-sm font-medium text-gray-900 hover:text-pink-600 transition-colors pb-1 border-b border-gray-900 hover:border-pink-600 self-start md:self-end cursor-pointer">
+          <Link
+            to={"services"}
+            className="group flex items-center gap-2 text-sm font-medium text-gray-900 hover:text-pink-600 transition-colors pb-1 border-b border-gray-900 hover:border-pink-600 self-start md:self-end cursor-pointer"
+          >
             Explore All Services
             <span className="transform group-hover:translate-x-1 transition-transform duration-300">
               →
             </span>
-          </button>
+          </Link>
         </div>
 
-        {/* 
-          बदलाव: gap-8 lg:gap-10 को बढ़ाकर gap-10 lg:gap-14 कर दिया गया है।
-          इससे कार्ड्स के बीच में एकदम परफेक्ट दूरी (Distance) बन जाएगी। 
-        */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 lg:gap-14">
           {servicesData.map((service) => (
-            // बदलाव: key prop को यहाँ Map के अंदर लगाया गया है (Best Practice)
-            <ServiceCard key={service.id} service={service} />
+            <ServiceCard key={service._id} service={service} />
           ))}
         </div>
       </div>

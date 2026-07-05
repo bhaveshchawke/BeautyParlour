@@ -3,8 +3,11 @@ import { useMessage } from "../hooks/useMessage";
 import { sendRegisteredData, validateOtp } from "../services/AuthService";
 import { Loader } from "../components/common/Loader";
 import { useNavigate } from "react-router-dom";
+import { useContext } from "react";
+import { AuthContext } from "../context/AuthContext";
 
 export const Register = () => {
+  const { user, loginUser } = useContext(AuthContext);
   const navigate = useNavigate();
   const { showMessage } = useMessage();
   const [userData, setUserData] = useState({
@@ -147,6 +150,7 @@ export const Register = () => {
       showMessage("Registration successful! You are now logged in.", "success");
       setTimeLeft(0);
 
+      loginUser(response.user);
       navigate("/");
     } catch (error) {
       if (timeLeft === 0) {
@@ -383,7 +387,7 @@ export const Register = () => {
                   disabled={loader}
                   className="w-full mt-2 flex items-center justify-center gap-3 px-6 py-4 bg-white text-black text-sm font-semibold rounded-lg hover:bg-pink-500 hover:text-white transition-colors duration-300 cursor-pointer shadow-lg disabled:opacity-70 disabled:cursor-not-allowed"
                 >
-                  {loader ? <Loader /> : "Register Now"}
+                  {loader ? <Loader inButton={true} /> : "Register Now"}
                 </button>
               </form>
 
@@ -489,7 +493,11 @@ export const Register = () => {
                       disabled={loader}
                       className="w-full flex items-center justify-center gap-3 px-6 py-4 bg-pink-600 text-white text-sm font-semibold rounded-lg hover:bg-pink-700 transition-colors duration-300 cursor-pointer shadow-[0_10px_20px_-10px_rgba(219,39,119,0.5)] disabled:opacity-70 disabled:cursor-not-allowed"
                     >
-                      {loader ? <Loader /> : "Verify & Register"}
+                      {loader ? (
+                        <Loader inButton={true} />
+                      ) : (
+                        "Verify & Register"
+                      )}
                     </button>
 
                     <div className="flex flex-col items-center gap-1 mt-1">

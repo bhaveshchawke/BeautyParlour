@@ -80,3 +80,24 @@ export const cancelApointment = async (id) => {
     throw new Error(error.message);
   }
 };
+//get all apointments from backend//
+export const getAllAppointments = async () => {
+  try {
+    const response = await axios.post(
+      `${backendUrl}/appointment/getAll`,
+      {},
+      {
+        withCredentials: true,
+      },
+    );
+    if (!response) {
+      return null;
+    }
+    return response.data;
+  } catch (error) {
+    if (error.response && error.response.data && error.response.data.error) {
+      throw new Error(error.response.data.error);
+    }
+    throw new Error(error.message);
+  }
+};

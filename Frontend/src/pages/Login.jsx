@@ -10,8 +10,7 @@ export const Login = () => {
   //==navigation==//
   const navigate = useNavigate();
   //==get user info==//
-  const { user } = useContext(AuthContext);
-  //==custom message hook==//
+  const { user, loginUser } = useContext(AuthContext); //==custom message hook==//
   const { showMessage } = useMessage();
   // === States === //
   //==for save login data==//
@@ -86,7 +85,8 @@ export const Login = () => {
         showMessage(response.message, "success");
         setIsLoading(false);
         setTimeout(() => {
-          window.location.href = "/";
+          loginUser(response.user);
+          navigate("/");
         }, 1000);
       } catch (error) {
         showMessage(error.message || "Login failed! Something Went Wrong..");
@@ -222,7 +222,7 @@ export const Login = () => {
               type="submit"
               className="w-full mt-2 px-6 py-4 bg-white text-black text-sm font-semibold rounded-lg hover:bg-pink-500 hover:text-white transition-colors duration-300 cursor-pointer shadow-lg"
             >
-              {isLoading ? <Loader /> : "Sign In"}
+              {isLoading ? <Loader inButton={true} /> : "Sign In"}
             </button>
           </form>
 

@@ -20,4 +20,5 @@ authRoute.post(
 authRoute.get("/me", isAuth, authController.getMe);
 //for logout//
 authRoute.post("/logout", isAuth, authController.logout);
+//for validate is admin or not //
 module.exports = authRoute;
