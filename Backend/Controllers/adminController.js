@@ -1,6 +1,7 @@
 const appointmentModel = require("../Models/apointmentModel");
 const serviceModel = require("../Models/serviceModel");
 const cloudinary = require("../Services/cloudinaryService");
+const userModel = require("../Models/userModel");
 //for check is admin or not //
 const isAdmin = (req, res) => {
   const isAdmin = req.session.isAdmin;
@@ -215,7 +216,7 @@ const toggleServiceActive = async (req, res) => {
     if (!service) {
       return res.status(404).json({ error: "Service not found" });
     }
-    
+
     service.active = !service.active;
     await service.save();
     res.status(200).json({
@@ -230,6 +231,28 @@ const toggleServiceActive = async (req, res) => {
     });
   }
 };
+
+//getting all users data from database
+const getallusers = async (req, res) => {
+  try {
+    const users = await userModel.find({});
+    if (!users) {
+      return res.status(404).json({
+        error: "data not found",
+      });
+    }
+    res.status(200).json({
+      message: "data founded",
+      data: users,
+    });
+  } catch (error) {
+    console.log(error);
+
+    res.status(404).json({
+      error: "something went wrong!",
+    });
+  }
+};
 module.exports = {
   isAdmin,
   confirmedAppointments,
@@ -239,4 +262,5 @@ module.exports = {
   editService,
   deleteService,
   toggleServiceActive,
+  getallusers,
 };

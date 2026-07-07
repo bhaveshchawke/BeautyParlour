@@ -106,10 +106,28 @@ export const deleteService = async (id) => {
 ///for handle service active or not_________________
 export const isActive = async (id) => {
   try {
-    const response = await axios.post(`${backendUrl}/admin/isactive`, { id }, {
+    const response = await axios.post(
+      `${backendUrl}/admin/isactive`,
+      { id },
+      {
+        withCredentials: true,
+      },
+    );
+    return response.data;
+  } catch (error) {
+    if (error.response && error.response.data && error.response.data.error) {
+      throw new Error(error.response.data.error);
+    }
+    throw new Error(error.message);
+  }
+};
+// api for all customes data
+export const getAllUsers = async () => {
+  try {
+    const users = await axios.get(`${backendUrl}/admin/getallusers`, {
       withCredentials: true,
     });
-    return response.data;
+    return users.data;
   } catch (error) {
     if (error.response && error.response.data && error.response.data.error) {
       throw new Error(error.response.data.error);

@@ -16,6 +16,7 @@ import { ProtectedForAdmin } from "./components/common/ProtectedForAdmin";
 import { NotFound } from "./pages/NotFound";
 import { ServiceManagement } from "./AdminStore/ServiceManagement";
 import { AllServices } from "./pages/AllServices";
+import { HistoryPage } from "./AdminStore/HistoryPage";
 function App() {
   return (
     <>
@@ -36,6 +37,14 @@ function App() {
             element={
               <ProtectedForAdmin>
                 <ServiceManagement />
+              </ProtectedForAdmin>
+            }
+          />
+          <Route
+            path="userhistory"
+            element={
+              <ProtectedForAdmin>
+                <HistoryPage />
               </ProtectedForAdmin>
             }
           />

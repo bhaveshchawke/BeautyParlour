@@ -47,5 +47,7 @@ adminRoute.post(
   isAdmin,
   adminController.toggleServiceActive,
 );
+//get all usersData
+adminRoute.get("/getallusers", isAuth, isAdmin, adminController.getallusers);
 
 module.exports = adminRoute;

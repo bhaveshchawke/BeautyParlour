@@ -104,7 +104,7 @@ export const NavBar = () => {
                     Service Management
                   </NavLink>
                   <NavLink
-                    to="/admin/customers"
+                    to="/userhistory"
                     className="px-4 py-2.5 text-sm font-medium text-gray-700 hover:bg-pink-50 hover:text-pink-600 transition-colors"
                   >
                     User / Customer History
