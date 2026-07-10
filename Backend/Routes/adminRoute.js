@@ -49,5 +49,32 @@ adminRoute.post(
 );
 //get all usersData
 adminRoute.get("/getallusers", isAuth, isAdmin, adminController.getallusers);
+//add product
+
+adminRoute.post(
+  "/addproduct",
+  isAuth,
+  isAdmin,
+  upload.single("image"),
+  adminController.addProduct,
+);
+//for fetch all products_________________________________________________________
+adminRoute.get("/fetchproducts", adminController.getallProducts);
+//for update product _____________________________________________________________
+adminRoute.post(
+  "/updateproduct",
+  isAuth,
+  isAdmin,
+  upload.single("productImage"),
+  adminController.updateProduct,
+);
+//for delete product
+adminRoute.post(
+  "/deleteproduct",
+  isAuth,
+  isAdmin,
+
+  adminController.deleteProduct,
+);
 
 module.exports = adminRoute;

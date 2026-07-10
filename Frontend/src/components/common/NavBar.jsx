@@ -110,7 +110,7 @@ export const NavBar = () => {
                     User / Customer History
                   </NavLink>
                   <NavLink
-                    to="/admin/shop"
+                    to="/shopmanagement"
                     className="px-4 py-2.5 text-sm font-medium text-gray-700 hover:bg-pink-50 hover:text-pink-600 transition-colors"
                   >
                     Shop / E-commerce 🛍️

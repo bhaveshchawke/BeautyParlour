@@ -135,3 +135,65 @@ export const getAllUsers = async () => {
     throw new Error(error.message);
   }
 };
+// for adding products in App_____________________________________________________
+export const addProducts = async (data) => {
+  try {
+    const response = await axios.post(`${backendUrl}/admin/addproduct`, data, {
+      withCredentials: true,
+    });
+    return response.data;
+  } catch (error) {
+    if (error.response && error.response.data && error.response.data.error) {
+      throw new Error(error.response.data.error);
+    }
+    throw new Error(error.message);
+  }
+};
+// getting all products
+export const fetchAllProducts = async () => {
+  try {
+    const products = await axios.get(`${backendUrl}/admin/fetchproducts`, {
+      withCredentials: true,
+    });
+    return products.data;
+  } catch (error) {
+    if (error.response && error.response.data && error.response.data.error) {
+      throw new Error(error.response.data.error);
+    }
+    throw new Error(error.message);
+  }
+};
+//api for update/edit product
+export const updateProduct = async (data) => {
+  try {
+    const response = await axios.post(
+      `${backendUrl}/admin/updateproduct`,
+      data,
+      { withCredentials: true },
+    );
+    return response.data;
+  } catch (error) {
+    if (error.response && error.response.data && error.response.data.error) {
+      throw new Error(error.response.data.error);
+    }
+    throw new Error(error.message);
+  }
+};
+// for delete product
+export const deleteProduct = async (id) => {
+  try {
+    const response = await axios.post(
+      `${backendUrl}/admin/deleteproduct`,
+      { id },
+      {
+        withCredentials: true,
+      },
+    );
+    return response.data;
+  } catch (error) {
+    if (error.response && error.response.data && error.response.data.error) {
+      throw new Error(error.response.data.error);
+    }
+    throw new Error(error.message);
+  }
+};

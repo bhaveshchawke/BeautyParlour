@@ -1,6 +1,4 @@
 export const UserViewPopUp = ({ selectedUser, setSelectedUser }) => {
-  if (!selectedUser) return null;
-
   return (
     <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center z-50 p-4">
       <div className="bg-white rounded-3xl w-full max-w-2xl max-h-[90vh] flex flex-col shadow-2xl animate-in fade-in zoom-in duration-200 overflow-hidden">
@@ -8,12 +6,12 @@ export const UserViewPopUp = ({ selectedUser, setSelectedUser }) => {
         <div className="px-6 py-5 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
           <div className="flex items-center gap-4">
             <div className="w-12 h-12 rounded-full bg-rose-100 text-rose-600 flex items-center justify-center font-bold text-lg">
-              {(selectedUser?.userName || selectedUser?.name || "U").charAt(0)}
+              {selectedUser.userName.charAt(0)}
             </div>
             <div>
               <h2 className="text-lg font-bold text-slate-900 flex items-center gap-2">
-                {selectedUser?.userName || selectedUser?.name || "Unknown User"}
-                {(selectedUser?.totalAppointments || 0) >= 5 && (
+                {selectedUser.userName}
+                {selectedUser.totalAppointments >= 5 && (
                   <span className="text-sm" title="VIP Customer">
                     ⭐
                   </span>
@@ -77,7 +75,7 @@ export const UserViewPopUp = ({ selectedUser, setSelectedUser }) => {
                         {record.service}
                       </td>
                       <td className="py-3 px-4 text-xs font-medium text-slate-600">
-                        ₹{Number(record?.price || 0).toLocaleString("en-IN")}
+                        ₹{record.price.toLocaleString("en-IN")}
                       </td>
                       <td className="py-3 px-4">
                         <span
@@ -111,7 +109,7 @@ export const UserViewPopUp = ({ selectedUser, setSelectedUser }) => {
               Total Revenue Generated
             </p>
             <p className="text-lg font-bold text-rose-400">
-              ₹{Number(selectedUser?.lifetimeValue || 0).toLocaleString("en-IN")}
+              ₹{selectedUser.lifetimeValue.toLocaleString("en-IN")}
             </p>
           </div>
           <button

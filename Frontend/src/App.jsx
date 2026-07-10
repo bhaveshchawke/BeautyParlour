@@ -17,6 +17,7 @@ import { NotFound } from "./pages/NotFound";
 import { ServiceManagement } from "./AdminStore/ServiceManagement";
 import { AllServices } from "./pages/AllServices";
 import { HistoryPage } from "./AdminStore/HistoryPage";
+import { ShopManagement } from "./AdminStore/ShopManagement";
 function App() {
   return (
     <>
@@ -45,6 +46,14 @@ function App() {
             element={
               <ProtectedForAdmin>
                 <HistoryPage />
+              </ProtectedForAdmin>
+            }
+          />
+          <Route
+            path="shopmanagement"
+            element={
+              <ProtectedForAdmin>
+                <ShopManagement />
               </ProtectedForAdmin>
             }
           />

@@ -3,21 +3,21 @@ export const ProductCard = ({ product }) => {
     <div>
       {" "}
       <div
-        key={product.id}
+        key={product._id}
         className="group flex flex-col relative cursor-pointer"
       >
         {/* Image Container with Hover Quick Add */}
         <div className="w-full aspect-[4/5] bg-white rounded-xl overflow-hidden relative mb-4 border border-gray-100 shadow-sm">
           {/* 'New' Badge */}
-          {product.isNew && (
+          {product.badge === "NEW" && (
             <div className="absolute top-3 left-3 bg-[#0a0a0a] text-white text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-sm z-10">
               New
             </div>
           )}
 
           <img
-            src={product.image}
-            alt={product.name}
+            src={product.productImage}
+            alt={product.productName}
             className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-700 ease-in-out"
           />
 
@@ -38,10 +38,10 @@ export const ProductCard = ({ product }) => {
             {product.brand}
           </span>
           <h3 className="text-sm font-medium text-gray-900 leading-snug mb-2 line-clamp-1">
-            {product.name}
+            {product.productName}
           </h3>
           <span className="text-base font-semibold text-gray-900">
-            {product.price}
+            ₹{product.salePrice}
           </span>
         </div>
       </div>
