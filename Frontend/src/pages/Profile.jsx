@@ -6,6 +6,7 @@ import { getApointmentDataFromBackend } from "../services/AppointmentService";
 import { Link } from "react-router";
 import { ReShedule } from "../components/specific/ReShedule";
 import { AppointmentSkeleton } from "../components/common/AppointmentSkeleton";
+import { fetchOrders } from "../services/productService";
 
 export const Profile = () => {
   const { showMessage } = useMessage();
@@ -17,7 +18,10 @@ export const Profile = () => {
   const [apointments, setApointments] = useState([]);
   //for popUp resheduleBar //
   const [rescheduleId, setRescheduleId] = useState(null); // get user data from session //
+  //fetching orders
+  const [orders, setOrders] = useState([]);
   const { user, logout } = useContext(AuthContext);
+
   // for logout //
   const handleLogout = async () => {
     try {
@@ -39,6 +43,7 @@ export const Profile = () => {
     );
     setRescheduleId(null);
   };
+
   useEffect(() => {
     const handleApointment = async () => {
       try {
@@ -53,7 +58,25 @@ export const Profile = () => {
         setIsLoading(false);
       }
     };
+
+    const fetchOrdersData = async () => {
+      try {
+        const response = await fetchOrders();
+        if (!response || !response.orders) {
+          setOrders([]);
+          return;
+        }
+        // Filter out only Paid orders
+        const paidOrders = response.orders.filter((order) => order.paymentStatus === "Paid");
+        setOrders(paidOrders);
+      } catch (error) {
+        console.log(error);
+        setOrders([]);
+      }
+    };
+
     handleApointment();
+    fetchOrdersData();
   }, []);
 
   // Helper function to get styles based on status
@@ -132,12 +155,6 @@ export const Profile = () => {
                 🛍️ Cosmetic Orders
               </button>
               <button
-                onClick={() => setActiveTab("address")}
-                className={`w-full flex items-center gap-4 px-6 py-4 text-sm transition-all border-l-2 cursor-pointer ${activeTab === "address" ? "bg-white/5 border-pink-500 text-white font-medium" : "border-transparent text-gray-400 hover:bg-white/5 hover:text-white"}`}
-              >
-                📍 Saved Addresses
-              </button>
-              <button
                 onClick={() => setActiveTab("settings")}
                 className={`w-full flex items-center gap-4 px-6 py-4 text-sm transition-all border-l-2 cursor-pointer ${activeTab === "settings" ? "bg-white/5 border-pink-500 text-white font-medium" : "border-transparent text-gray-400 hover:bg-white/5 hover:text-white"}`}
               >
@@ -175,16 +192,24 @@ export const Profile = () => {
                     <div className="w-16 h-16 bg-pink-500/10 rounded-full flex items-center justify-center text-2xl mb-4 shadow-[0_0_15px_rgba(236,72,153,0.2)]">
                       📅
                     </div>
-                    <h4 className="text-lg font-medium text-white mb-2">No Appointments Yet</h4>
+                    <h4 className="text-lg font-medium text-white mb-2">
+                      No Appointments Yet
+                    </h4>
                     <p className="text-sm text-gray-400 font-light mb-6 max-w-sm">
-                      You haven't booked any services yet. Treat yourself to a premium salon experience!
+                      You haven't booked any services yet. Treat yourself to a
+                      premium salon experience!
                     </p>
-                    <Link to="/appointment" className="px-6 py-2.5 bg-pink-500 text-white text-sm font-medium rounded-lg hover:bg-pink-600 transition-colors shadow-[0_0_15px_rgba(236,72,153,0.3)]">
+                    <Link
+                      to="/appointment"
+                      className="px-6 py-2.5 bg-pink-500 text-white text-sm font-medium rounded-lg hover:bg-pink-600 transition-colors shadow-[0_0_15px_rgba(236,72,153,0.3)]"
+                    >
                       Book Now
                     </Link>
                   </div>
                 )}
-                {!isLoading && apointments.length > 0 && apointments.map((apointment) => {
+                {!isLoading &&
+                  apointments.length > 0 &&
+                  apointments.map((apointment) => {
                     const statusStyles = getStatusStyles(apointment.status);
                     return (
                       <div key={apointment._id} className="animate-fade-in m-4">
@@ -255,92 +280,75 @@ export const Profile = () => {
                   Recent <span className="font-semibold">Orders</span>
                 </h3>
 
-                {/* Single Order Card */}
-                <div className="bg-[#121212] rounded-2xl border border-white/5 p-6 flex flex-col gap-6 hover:border-pink-500/30 transition-colors">
-                  {/* Order Header */}
-                  <div className="flex justify-between items-center border-b border-white/5 pb-4">
-                    <div>
-                      <p className="text-xs text-gray-400 font-light mb-1">
-                        Order #BT-849201
-                      </p>
-                      <p className="text-sm font-medium text-white">
-                        Placed on Oct 12, 2026
-                      </p>
+                {/* Dynamic Orders List */}
+                {orders.length === 0 ? (
+                  <div className="bg-[#121212] rounded-2xl border border-white/5 p-10 text-center flex flex-col items-center justify-center m-4 animate-fade-in">
+                    <div className="w-16 h-16 bg-pink-500/10 rounded-full flex items-center justify-center text-2xl mb-4 shadow-[0_0_15px_rgba(236,72,153,0.2)]">
+                      🛍️
                     </div>
-                    <span className="px-3 py-1 bg-pink-500/10 text-pink-400 text-[10px] uppercase tracking-wider rounded-md font-medium border border-pink-500/20">
-                      Shipped
-                    </span>
-                  </div>
-
-                  {/* Order Item */}
-                  <div className="flex items-center gap-4">
-                    <img
-                      src="https://images.pexels.com/photos/2587370/pexels-photo-2587370.jpeg?auto=compress&cs=tinysrgb&w=150"
-                      alt="Product"
-                      className="w-16 h-16 rounded-lg object-cover border border-white/10"
-                    />
-                    <div>
-                      <h4 className="text-sm font-medium text-white">
-                        L'Oréal Professional Hair Spa Mask
-                      </h4>
-                      <p className="text-xs text-gray-400 font-light">
-                        Qty: 1 • ₹749
-                      </p>
-                    </div>
-                  </div>
-
-                  {/* Order Footer */}
-                  <div className="flex justify-between items-center pt-2">
-                    <p className="text-sm font-medium text-white">
-                      Total: ₹749
+                    <h4 className="text-lg font-medium text-white mb-2">
+                      No Orders Yet
+                    </h4>
+                    <p className="text-sm text-gray-400 font-light mb-6">
+                      Start shopping to see your orders here.
                     </p>
-                    <button className="text-xs text-pink-500 hover:text-pink-400 font-medium cursor-pointer underline-offset-4 hover:underline">
-                      Track Package →
-                    </button>
                   </div>
-                </div>
+                ) : (
+                  orders.map((order) => (
+                    <div
+                      key={order._id}
+                      className="bg-[#121212] rounded-2xl border border-white/5 p-6 flex flex-col gap-6 hover:border-pink-500/30 transition-colors mb-4"
+                    >
+                      {/* Order Header */}
+                      <div className="flex justify-between items-center border-b border-white/5 pb-4">
+                        <div>
+                          <p className="text-xs text-gray-400 font-light mb-1">
+                            Order #{order._id.substring(0, 10).toUpperCase()}
+                          </p>
+                          <p className="text-sm font-medium text-white">
+                            {new Date(order.createdAt).toLocaleDateString()}
+                          </p>
+                        </div>
+                        <span className="px-3 py-1 bg-pink-500/10 text-pink-400 text-[10px] uppercase tracking-wider rounded-md font-medium border border-pink-500/20">
+                          {order.orderStatus || "Pending"}
+                        </span>
+                      </div>
+
+                      {/* Order Items */}
+                      <div className="flex flex-col gap-4">
+                        {order.items.map((item, idx) => (
+                          <div
+                            key={idx}
+                            className="flex items-center gap-4 border-b border-white/5 pb-4 last:border-0 last:pb-0"
+                          >
+                            <div className="w-12 h-12 bg-pink-500/10 rounded-lg flex items-center justify-center border border-pink-500/20 text-pink-500 text-xl">
+                              🛍️
+                            </div>
+                            <div>
+                              <h4 className="text-sm font-medium text-white">
+                                {item.productName}
+                              </h4>
+                              <p className="text-xs text-gray-400 font-light">
+                                Qty: {item.quantity} • ₹{item.price}
+                              </p>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+
+                      {/* Order Footer */}
+                      <div className="flex justify-between items-center pt-2 border-t border-white/5">
+                        <p className="text-sm font-medium text-white">
+                          Total: ₹{order.totalAmount}
+                        </p>
+                      </div>
+                    </div>
+                  ))
+                )}
               </div>
             )}
 
-            {/* 3. Saved Address View (Preview) */}
-            {activeTab === "address" && (
-              <div className="animate-fade-in">
-                <div className="flex justify-between items-center mb-6">
-                  <h3 className="text-xl font-light text-white">
-                    Saved <span className="font-semibold">Addresses</span>
-                  </h3>
-                  <button className="text-xs bg-white/5 hover:bg-white/10 text-white px-4 py-2 rounded-lg transition-colors cursor-pointer border border-white/10">
-                    + Add New
-                  </button>
-                </div>
-
-                <div className="bg-[#121212] rounded-2xl border border-pink-500/30 p-6 relative">
-                  <div className="absolute top-6 right-6 text-pink-500 text-xs font-semibold uppercase tracking-widest bg-pink-500/10 px-2 py-1 rounded">
-                    Default
-                  </div>
-                  <h4 className="text-sm font-medium text-white mb-2">Home</h4>
-                  <p className="text-sm text-gray-400 font-light leading-relaxed max-w-sm">
-                    Bhavesh Chawke
-                    <br />
-                    101, Tech Park, IT Square
-                    <br />
-                    Indore, Madhya Pradesh 452001
-                    <br />
-                    Phone: +91 98765 43210
-                  </p>
-                  <div className="flex gap-4 mt-4">
-                    <button className="text-xs text-gray-300 hover:text-white transition-colors cursor-pointer">
-                      Edit
-                    </button>
-                    <button className="text-xs text-red-400 hover:text-red-300 transition-colors cursor-pointer">
-                      Delete
-                    </button>
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {/* 4. Settings View (Empty state preview) */}
+            {/* 3. Settings View (Empty state preview) */}
             {activeTab === "settings" && (
               <div className="animate-fade-in">
                 <h3 className="text-xl font-light text-white mb-6">
@@ -348,8 +356,7 @@ export const Profile = () => {
                 </h3>
                 <div className="bg-[#121212] rounded-2xl border border-white/5 p-10 text-center">
                   <p className="text-gray-400 font-light text-sm">
-                    Update your password, notification preferences, and privacy
-                    settings here.
+                    comming soon...
                   </p>
                   {/* You can add a form here later */}
                 </div>

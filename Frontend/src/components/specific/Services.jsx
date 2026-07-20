@@ -20,7 +20,7 @@ export const Services = () => {
     };
     getServices();
   }, []);
-  console.log(servicesData);
+  // console.log(servicesData); // Removed to prevent performance lag
 
   return (
     <section className="bg-white font-sans py-20 lg:py-28">

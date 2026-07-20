@@ -1,3 +1,4 @@
+import { Link } from "react-router";
 export const Footer = () => {
   return (
     <footer className="bg-[#0a0a0a] text-gray-400 font-sans pt-20 pb-8 border-t-4 border-pink-600">
@@ -17,15 +18,24 @@ export const Footer = () => {
             </p>
             {/* Social Links (Clean Text based, no heavy icons needed) */}
             <div className="flex gap-4 text-sm font-medium">
-              <span className="hover:text-pink-500 cursor-pointer transition-colors">
+              <Link
+                to={"https://www.instagram.com/mr_chawke_ji/"}
+                className="hover:text-pink-500 cursor-pointer transition-colors"
+              >
                 Instagram
-              </span>
-              <span className="hover:text-pink-500 cursor-pointer transition-colors">
+              </Link>
+              <Link
+                to={"https://www.facebook.com/bhavesh.chawke.9/"}
+                className="hover:text-pink-500 cursor-pointer transition-colors"
+              >
                 Facebook
-              </span>
-              <span className="hover:text-pink-500 cursor-pointer transition-colors">
+              </Link>
+              <Link
+                to={"https://x.com/ChawkeBhav95138"}
+                className="hover:text-pink-500 cursor-pointer transition-colors"
+              >
                 Twitter
-              </span>
+              </Link>
             </div>
           </div>
 
@@ -36,19 +46,14 @@ export const Footer = () => {
             </h4>
             <ul className="flex flex-col gap-4 text-sm font-light">
               <li className="hover:text-pink-500 cursor-pointer transition-colors w-fit">
-                About Us
+                <Link to={"about-us"}>About Us</Link>
               </li>
               <li className="hover:text-pink-500 cursor-pointer transition-colors w-fit">
-                Shop Cosmetics
+                <Link to={"shop"}>Shop Cosmetics</Link>
               </li>
+
               <li className="hover:text-pink-500 cursor-pointer transition-colors w-fit">
-                Combo Offers
-              </li>
-              <li className="hover:text-pink-500 cursor-pointer transition-colors w-fit">
-                Customer Reviews
-              </li>
-              <li className="hover:text-pink-500 cursor-pointer transition-colors w-fit">
-                Contact Us
+                <Link to={"contact"}> Contact Us</Link>
               </li>
             </ul>
           </div>
@@ -85,20 +90,20 @@ export const Footer = () => {
             <div className="text-sm font-light leading-relaxed mb-4 flex flex-col gap-2">
               <p>
                 <span className="block text-white font-medium mb-1">
-                  Indore Studio:
+                  📍Amravati Ghat,Betul
                 </span>
-                101, Premium Hub, AB Road, <br />
-                Indore, Madhya Pradesh 452001
+                Amravati Ghat Gujri Chauk, <br />
+                sub-district:Prabhat pattan, 460665,
               </p>
             </div>
 
             <div className="text-sm font-light leading-relaxed flex flex-col gap-1 mt-2">
               <p className="text-white font-medium">Bookings & Support:</p>
               <p className="hover:text-pink-500 cursor-pointer transition-colors">
-                +91 98765 43210
+                +91 9685641XXX
               </p>
               <p className="hover:text-pink-500 cursor-pointer transition-colors">
-                hello@beauten.com
+                bhaveshchawke4321@gmail.com
               </p>
             </div>
           </div>

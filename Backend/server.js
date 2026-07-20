@@ -34,11 +34,13 @@ const authRoute = require("./Routes/authRoute");
 const appointmentRoute = require("./Routes/appointmentRoute");
 const adminRoute = require("./Routes/adminRoute");
 const serviceRoute = require("./Routes/serviceRoute");
+const productRoute = require("./Routes/productRoute");
 //route use//
 server.use("/api/auth", authRoute);
 server.use("/api/appointment", appointmentRoute);
 server.use("/api/admin", adminRoute);
 server.use("/api/services", serviceRoute);
+server.use("/api/product", productRoute);
 const PORT = process.env.PORT || 3000;
 
 server.listen(PORT, async () => {

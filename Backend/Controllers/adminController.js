@@ -3,6 +3,8 @@ const serviceModel = require("../Models/serviceModel");
 const cloudinary = require("../Services/cloudinaryService");
 const userModel = require("../Models/userModel");
 const Product = require("../Models/productModel");
+const cartModel = require("../Models/cartModel");
+const orderModel = require("../Models/orderModel");
 //for check is admin or not //
 const isAdmin = (req, res) => {
   const isAdmin = req.session.isAdmin;
@@ -237,7 +239,7 @@ const toggleServiceActive = async (req, res) => {
 const getallusers = async (req, res) => {
   try {
     const users = await userModel.find({});
-    if (!users) {
+    if (!users || users.length === 0) {
       return res.status(404).json({
         error: "data not found",
       });
@@ -249,8 +251,8 @@ const getallusers = async (req, res) => {
   } catch (error) {
     console.log(error);
 
-    res.status(404).json({
-      error: "something went wrong!",
+    res.status(500).json({
+      error: "Internal server error!",
     });
   }
 };
@@ -428,7 +430,132 @@ const deleteProduct = async (req, res) => {
     });
   }
 };
+// for added to cart
+const addToCart = async (req, res) => {
+  const { id } = req.body;
+  try {
+    const alreadyExist = await cartModel.findOne({
+      productId: id,
+      userId: req.session.userId,
+    });
+    if (alreadyExist) {
+      return res.status(200).json({
+        message: "Product already in cart",
+        data: alreadyExist,
+      });
+    }
+    const response = await cartModel.create({
+      userId: req.session.userId,
+      productId: id,
+    });
+    if (!response) {
+      return res.status(401).json({
+        error: "something went wrong",
+      });
+    }
+    res.status(200).json({
+      message: "Added to cart",
+      data: response,
+    });
+  } catch (error) {
+    res.status(401).json({
+      error: "something went wrong",
+    });
+  }
+};
+//__for fetching carts___________________________________
+const fetchCarts = async (req, res) => {
+  try {
+    const carts = await cartModel.find({
+      userId: req.session.userId,
+    });
+    if (!carts || carts.length === 0) {
+      return res.status(404).json({
+        error: "cart is empty",
+      });
+    }
+    res.status(200).json({
+      success: true,
+      data: carts,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      error: "Internal server error",
+    });
+  }
+};
+//__ for tooogle product status active/dissable__________________________
+const toogleProductStatus = async (req, res) => {
+  const { id } = req.body;
+  try {
+    const product = await Product.findById(id);
+    if (!product) {
+      return res.status(404).json({ error: "product not found" });
+    }
 
+    product.active = !product.active;
+    await product.save();
+    res.status(200).json({
+      success: true,
+      message: `product is now ${product.active ? "Active" : "Off"}`,
+      data: product,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+//fetching all orders____________________
+const fetchOrders = async (req, res) => {
+  try {
+    const orders = await orderModel.find({});
+    if (!orders) {
+      return res.status(404).json({
+        error: "orders not found",
+      });
+    }
+    res.status(200).json({
+      message: "orders founded",
+      data: orders,
+    });
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+// update order status
+const updateOrderStatus = async (req, res) => {
+  try {
+    const { orderId, newStatus } = req.body;
+
+    if (!orderId || !newStatus) {
+      return res.status(400).json({ success: false, message: "Order ID and New Status are required!" });
+    }
+
+    const updatedOrder = await orderModel.findByIdAndUpdate(
+      orderId,
+      { orderStatus: newStatus },
+      { new: true }
+    );
+
+    if (!updatedOrder) {
+      return res.status(404).json({ success: false, message: "Order not found!" });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Order status updated successfully",
+      order: updatedOrder
+    });
+
+  } catch (error) {
+    console.log("Error in updateOrderStatus:", error);
+    res.status(500).json({ success: false, message: "Internal server error" });
+  }
+};
 module.exports = {
   isAdmin,
   confirmedAppointments,
@@ -443,4 +570,9 @@ module.exports = {
   getallProducts,
   updateProduct,
   deleteProduct,
+  addToCart,
+  fetchCarts,
+  toogleProductStatus,
+  fetchOrders,
+  updateOrderStatus,
 };

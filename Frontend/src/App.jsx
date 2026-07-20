@@ -18,6 +18,7 @@ import { ServiceManagement } from "./AdminStore/ServiceManagement";
 import { AllServices } from "./pages/AllServices";
 import { HistoryPage } from "./AdminStore/HistoryPage";
 import { ShopManagement } from "./AdminStore/ShopManagement";
+import { CheckOut } from "./pages/CheckOut";
 function App() {
   return (
     <>
@@ -68,6 +69,14 @@ function App() {
             element={
               <ProtectedRoute>
                 <Cart />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="checkout"
+            element={
+              <ProtectedRoute>
+                <CheckOut />
               </ProtectedRoute>
             }
           />

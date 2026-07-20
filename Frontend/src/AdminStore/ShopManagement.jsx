@@ -4,76 +4,82 @@ import { fetchAllProducts } from "../services/AdminService";
 import { EditProduct } from "./EditProduct";
 import { deleteProduct } from "../services/AdminService";
 import { useMessage } from "../hooks/useMessage";
-// ─── Dummy Data for Orders (Order API aane tak ise dummy rakhenge) ───────────
-const DUMMY_ORDERS = [
-  {
-    orderId: "ORD-9021",
-    customer: "Priya Sharma",
-    date: "10 Jul 2026",
-    items: "L'Oreal Hair Spa (x1), MAC Fix+ (x1)",
-    total: 2050,
-    status: "Pending",
-  },
-  {
-    orderId: "ORD-9020",
-    customer: "Neha Gupta",
-    date: "09 Jul 2026",
-    items: "O3+ Bridal Kit (x2)",
-    total: 4200,
-    status: "Shipped",
-  },
-];
-
+import { toogleProductStatus } from "../services/AdminService";
+import { fetchOrders, updateOrderStatusApi } from "../services/AdminService";
 export const ShopManagement = () => {
+  //__state__for_orders________________________________________________________
+  const { showMessage } = useMessage();
   const [activeTab, setActiveTab] = useState("Products");
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
-  const { showMessage } = useMessage();
   // ─── Dynamic States ──────────────────────────────────────────────────────
   const [products, setProducts] = useState([]);
-  const [orders, setOrders] = useState(DUMMY_ORDERS);
+  const [orders, setOrders] = useState([]); // for orders
   const [isLoading, setIsLoading] = useState(true);
   // ___edit Model____________________________________________________________
   const [isEdit, setIsEdit] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null); // Naya state
+  //_for-total money--______________________________
 
-  // ─── Fetch Products API Call ─────────────────────────────────────────────
-  const getProducts = async () => {
-    try {
-      setIsLoading(true);
-      const response = await fetchAllProducts();
-      // Aapke instruction ke anusaar data .data ke andar aayega
-      if (response && response.data) {
-        setProducts(response.data);
-      }
-    } catch (error) {
-      console.error("Failed to fetch products", error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  // Jab bhi page load ho ya naya product add ho (Modal close ho), list refresh ho
   useEffect(() => {
-    getProducts();
+    const getProductsOrders = async () => {
+      try {
+        setIsLoading(true);
+        const [products, orders] = await Promise.all([
+          fetchAllProducts(),
+          fetchOrders(),
+        ]);
+        // Aapke instruction ke anusaar data .data ke andar aayega
+        if (products && products.data) {
+          setProducts(products.data);
+        }
+        if (orders && orders.data) {
+          setOrders(orders.data);
+        }
+      } catch (error) {
+        console.error("Failed to fetch products", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    getProductsOrders();
   }, [isAddModalOpen]);
 
   // ─── Handlers ──────────────────────────────────────────────────────────
-  const toggleProductStatus = (id) => {
-    // TODO: Yahan backend me Active/Off status update karne ki API lagegi
-    // Abhi ke liye Optimistic UI update kar rahe hain (_id use karke)
-    setProducts((prev) =>
-      prev.map((product) =>
-        product._id === id ? { ...product, active: !product.active } : product,
-      ),
-    );
+  const toggleProductStatus = async (id) => {
+    try {
+      const res = await toogleProductStatus(id);
+      if (!res) {
+        return;
+      }
+      showMessage(res.message, "success");
+      setProducts((prev) =>
+        prev.map((product) =>
+          product._id === id
+            ? { ...product, active: !product.active }
+            : product,
+        ),
+      );
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   const updateOrderStatus = (id, newStatus) => {
     setOrders((prev) =>
       prev.map((order) =>
-        order.orderId === id ? { ...order, status: newStatus } : order,
+        order._id === id ? { ...order, orderStatus: newStatus } : order,
       ),
     );
+  };
+
+  const handleStatusChange = async (orderId, newStatus) => {
+    const response = await updateOrderStatusApi(orderId, newStatus);
+    if (response.success) {
+      updateOrderStatus(orderId, newStatus);
+      showMessage("Order status updated!", "success");
+    } else {
+      showMessage(response.message || "Failed to update status", "error");
+    }
   };
   const handleDeleteProduct = async (id) => {
     try {
@@ -209,7 +215,12 @@ export const ShopManagement = () => {
               <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-0.5">
                 Total Sales
               </p>
-              <p className="text-2xl font-black text-slate-900">₹6.2k</p>
+              <p className="text-2xl font-black text-slate-900">
+                ₹
+                {orders
+                  .filter((item) => item.paymentStatus === "Paid")
+                  .reduce((acc, curr) => acc + curr.totalAmount, 0)}
+              </p>
             </div>
           </div>
         </div>
@@ -261,7 +272,8 @@ export const ShopManagement = () => {
             <div className="overflow-x-auto">
               <table className="w-full text-left border-collapse">
                 <thead>
-                  <tr className="bg-slate-50 border-b border-slate-200 text-slate-500 text-[11px] uppercase tracking-widest font-bold">
+                  {/* Changed text-[11px] to text-sm */}
+                  <tr className="bg-slate-50 border-b border-slate-200 text-slate-500 text-sm uppercase tracking-widest font-bold">
                     <th className="py-4 px-6">Product Details</th>
                     <th className="py-4 px-6">Pricing</th>
                     <th className="py-4 px-6 text-center">Stock Status</th>
@@ -269,12 +281,12 @@ export const ShopManagement = () => {
                     <th className="py-4 px-6 text-right">Actions</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-100 text-sm">
+                <tbody className="divide-y divide-slate-100">
                   {isLoading ? (
                     <tr>
                       <td
                         colSpan="5"
-                        className="py-10 text-center text-slate-500 font-medium"
+                        className="py-10 text-center text-base text-slate-500 font-medium"
                       >
                         Loading Products...
                       </td>
@@ -283,7 +295,7 @@ export const ShopManagement = () => {
                     <tr>
                       <td
                         colSpan="5"
-                        className="py-10 text-center text-slate-500 font-medium"
+                        className="py-10 text-center text-base text-slate-500 font-medium"
                       >
                         No products found. Please add a new product.
                       </td>
@@ -303,25 +315,27 @@ export const ShopManagement = () => {
                               className="w-14 h-14 rounded-xl object-cover border border-slate-100 shadow-sm"
                             />
                             <div>
-                              {/* Brand Name */}
-                              <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider mb-0.5">
+                              {/* Brand Name - Changed text-[10px] to text-xs */}
+                              <p className="text-xs text-slate-500 font-bold uppercase tracking-wider mb-0.5">
                                 {product.brand}
                               </p>
 
                               {/* Product Name & Badge */}
                               <div className="flex items-center gap-2 mb-1">
-                                <p className="font-bold text-slate-900">
+                                {/* Changed to text-base for product name */}
+                                <p className="text-base font-bold text-slate-900">
                                   {product.productName}
                                 </p>
                                 {product.badge && product.badge !== "None" && (
-                                  <span className="bg-rose-100 text-rose-600 text-[9px] font-black uppercase px-1.5 py-0.5 rounded tracking-widest">
+                                  /* Changed text-[9px] to text-xs */
+                                  <span className="bg-rose-100 text-rose-600 text-xs font-bold uppercase px-2 py-0.5 rounded tracking-widest">
                                     {product.badge}
                                   </span>
                                 )}
                               </div>
 
-                              {/* Category */}
-                              <span className="inline-block px-2 py-0.5 bg-slate-100 text-slate-500 text-[10px] font-bold uppercase tracking-wider rounded">
+                              {/* Category - Changed text-[10px] to text-xs */}
+                              <span className="inline-block px-2.5 py-1 bg-slate-100 text-slate-500 text-xs font-bold uppercase tracking-wider rounded">
                                 {product.productCategory}
                               </span>
                             </div>
@@ -331,11 +345,13 @@ export const ShopManagement = () => {
                         {/* Pricing */}
                         <td className="py-4 px-6">
                           <div className="flex flex-col">
-                            <span className="font-bold text-slate-900">
+                            {/* Changed to text-base */}
+                            <span className="text-base font-bold text-slate-900">
                               ₹{product.salePrice?.toLocaleString()}
                             </span>
                             {product.originalPrice !== product.salePrice && (
-                              <span className="text-[11px] text-slate-400 line-through font-medium mt-0.5">
+                              /* Changed text-[11px] to text-sm */
+                              <span className="text-sm text-slate-400 line-through font-medium mt-0.5">
                                 ₹{product.originalPrice?.toLocaleString()}
                               </span>
                             )}
@@ -344,9 +360,10 @@ export const ShopManagement = () => {
 
                         {/* Stock Status */}
                         <td className="py-4 px-6 text-center">
-                          <div className="flex flex-col items-center gap-1">
+                          <div className="flex flex-col items-center gap-1.5">
+                            {/* Changed text-[10px] to text-xs */}
                             <span
-                              className={`px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider ${
+                              className={`px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider ${
                                 product.stockQuantity === 0
                                   ? "bg-rose-50 text-rose-600"
                                   : product.stockQuantity < 5
@@ -360,7 +377,8 @@ export const ShopManagement = () => {
                                   ? "Low Stock"
                                   : "In Stock"}
                             </span>
-                            <span className="text-[11px] text-slate-500 font-medium">
+                            {/* Changed text-[11px] to text-sm */}
+                            <span className="text-sm text-slate-500 font-medium">
                               {product.stockQuantity} units left
                             </span>
                           </div>
@@ -390,8 +408,8 @@ export const ShopManagement = () => {
                         <td className="py-4 px-6 flex justify-end gap-2">
                           <button
                             onClick={() => {
-                              setSelectedProduct(product); // Click kiye hue product ko save kiya
-                              setIsEdit(true); // Popup open kiya
+                              setSelectedProduct(product);
+                              setIsEdit(true);
                             }}
                             className="p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors cursor-pointer"
                             title="Edit"
@@ -445,55 +463,78 @@ export const ShopManagement = () => {
             <div className="overflow-x-auto">
               <table className="w-full text-left border-collapse">
                 <thead>
-                  <tr className="bg-slate-50 border-b border-slate-200 text-slate-500 text-[11px] uppercase tracking-widest font-bold">
+                  {/* Changed text-[11px] to text-sm */}
+                  <tr className="bg-slate-50 border-b border-slate-200 text-slate-500 text-sm uppercase tracking-widest font-bold">
                     <th className="py-4 px-6">Order ID & Date</th>
                     <th className="py-4 px-6">Customer & Items</th>
                     <th className="py-4 px-6">Total Amount</th>
+                    <th className="py-4 px-6">Payment Status</th>
                     <th className="py-4 px-6 text-right">Update Status</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-100 text-sm">
+                <tbody className="divide-y divide-slate-100">
                   {orders.map((order) => (
                     <tr
-                      key={order.orderId}
+                      key={order._id}
                       className="hover:bg-slate-50/50 transition-colors group"
                     >
                       <td className="py-4 px-6">
-                        <p className="font-bold text-slate-900 mb-0.5">
-                          {order.orderId}
+                        {/* Changed to text-base */}
+                        <p className="text-base font-bold text-slate-900 mb-0.5">
+                          {order._id}
                         </p>
-                        <p className="text-[11px] text-slate-500 font-medium">
-                          {order.date}
+                        {/* Changed text-[11px] to text-sm */}
+                        <p className="text-sm text-slate-500 font-medium">
+                          {order.createdAt
+                            ? new Date(order.createdAt).toLocaleString()
+                            : "N/A"}
                         </p>
                       </td>
                       <td className="py-4 px-6">
                         <p className="font-bold text-slate-900 mb-1">
-                          {order.customer}
+                          {order.customerName}
+                        </p>
+                        <p className="text-[12px] text-slate-500 font-medium mb-1">
+                          📞 {order.customerPhone}
                         </p>
                         <p className="text-[11px] text-slate-500 leading-relaxed max-w-xs">
-                          {order.items}
+                          {order.items
+                            .map(
+                              (item) =>
+                                `${item.productName} (x${item.quantity})`,
+                            )
+                            .join(", ")}
                         </p>
                       </td>
-                      <td className="py-4 px-6 font-black text-emerald-600">
-                        ₹{order.total.toLocaleString()}
+                      {/* Changed to text-base */}
+                      <td className="py-4 px-6 text-base font-black text-emerald-600">
+                        ₹{order.totalAmount?.toLocaleString()}
+                      </td>
+                      <td className="py-4 px-6">
+                        <span className="text-sm font-bold text-slate-700 uppercase tracking-wider">
+                          {order.paymentStatus || "N/A"}
+                        </span>
                       </td>
                       <td className="py-4 px-6 text-right">
+                        {/* Changed text-xs to text-sm and increased padding */}
                         <select
-                          value={order.status}
+                          value={order.orderStatus}
                           onChange={(e) =>
-                            updateOrderStatus(order.orderId, e.target.value)
+                            handleStatusChange(order._id, e.target.value)
                           }
-                          className={`text-xs font-bold uppercase tracking-wider px-3 py-1.5 rounded-lg border outline-none cursor-pointer appearance-none text-center ${
-                            order.status === "Pending"
+                          className={`text-sm font-bold uppercase tracking-wider px-4 py-2 rounded-lg border outline-none cursor-pointer appearance-none text-center ${
+                            order.orderStatus === "Pending"
                               ? "bg-amber-50 text-amber-700 border-amber-200"
-                              : order.status === "Shipped"
+                              : order.orderStatus === "Shipped"
                                 ? "bg-blue-50 text-blue-700 border-blue-200"
                                 : "bg-emerald-50 text-emerald-700 border-emerald-200"
                           }`}
                         >
                           <option value="Pending">Pending</option>
+                          <option value="Processing">Processing</option>
                           <option value="Shipped">Shipped</option>
                           <option value="Delivered">Delivered</option>
+                          <option value="Cancelled">Cancelled</option>
                         </select>
                       </td>
                     </tr>

@@ -1,4 +1,23 @@
+import { useMessage } from "../../hooks/useMessage";
+import { addToCart } from "../../services/AdminService";
 export const ProductCard = ({ product }) => {
+  const { showMessage } = useMessage();
+  //add to cart________________________
+  const addedToCart = async (id) => {
+    try {
+      const response = await addToCart(id);
+      if (!response) {
+        showMessage("something went wrong", "error");
+      }
+      // Dispatch custom event so Navbar updates instantly
+      window.dispatchEvent(new Event("cartUpdated"));
+      showMessage(response.message, "success");
+    } catch (error) {
+      console.log(error);
+
+      showMessage("something went wrong", "error");
+    }
+  };
   return (
     <div>
       {" "}
@@ -24,8 +43,8 @@ export const ProductCard = ({ product }) => {
           {/* Slide-up Add to Cart Button */}
           <div className="absolute inset-x-0 bottom-0 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-in-out z-20">
             <button
-              className="w-full bg-[#0a0a0a] text-white text-sm font-medium py-3.5 hover:bg-pink-600 transition-colors"
-              /* onClick={() => addToCart(product.id)} */
+              className="w-full bg-[#0a0a0a] cursor-pointer text-white text-sm font-medium py-3.5 hover:bg-pink-600 transition-colors"
+              onClick={() => addedToCart(product._id)}
             >
               Add to Cart
             </button>

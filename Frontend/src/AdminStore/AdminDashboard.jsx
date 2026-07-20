@@ -82,7 +82,7 @@ export const AdminDashboard = () => {
     };
     fetchAppointment();
   }, []);
-  console.log(appointments);
+  // console.log(appointments); // Removed to prevent performance lag
 
   return (
     // Main Dashboard Container

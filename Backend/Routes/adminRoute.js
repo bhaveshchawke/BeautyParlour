@@ -76,5 +76,42 @@ adminRoute.post(
 
   adminController.deleteProduct,
 );
+// for added to cart
+adminRoute.post(
+  "/addtocart",
+  isAuth,
+
+  adminController.addToCart,
+);
+//for fetching cart items by id
+adminRoute.get(
+  "/fetchcarts",
+  isAuth,
+
+  adminController.fetchCarts,
+);
+// toogle product status  in shopmanagement
+adminRoute.post(
+  "/toogleproductptatus",
+  isAuth,
+  isAdmin,
+  adminController.toogleProductStatus,
+);
+
+//for fetching orders
+adminRoute.get(
+  "/fetchorders",
+  isAuth,
+  isAdmin,
+  adminController.fetchOrders,
+);
+
+// update order status
+adminRoute.put(
+  "/update-order-status",
+  isAuth,
+  isAdmin,
+  adminController.updateOrderStatus,
+);
 
 module.exports = adminRoute;

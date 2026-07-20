@@ -205,9 +205,12 @@ export const ShopPage = () => {
             </div>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-12">
-              {filteredProducts.map((product) => (
-                <ProductCard key={product._id} product={product} />
-              ))}
+              {filteredProducts.map((product) =>
+                // ✅ Sirf tabhi ProductCard dikhega jab active true hoga, varna null return karega
+                product.active ? (
+                  <ProductCard key={product._id} product={product} />
+                ) : null,
+              )}
             </div>
           )}
         </main>

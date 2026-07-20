@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { NavLink } from "react-router-dom";
-import { CiSearch, CiUser, CiShoppingCart } from "react-icons/ci";
+import { CiUser, CiShoppingCart } from "react-icons/ci";
 import { SearchBar } from "./SearchBar";
 import { useContext } from "react";
 import { AuthContext } from "../../context/AuthContext";
@@ -8,11 +8,13 @@ import { Loader } from "../common/Loader";
 import { logoutUser } from "../../services/AuthService";
 import { useMessage } from "../../hooks/useMessage";
 import { useAdminData } from "../../hooks/useAdminData";
+import { fetchAllCarts } from "../../services/productService";
 export const NavBar = () => {
   const { isAdmin } = useAdminData();
   const [isOpenSearch, setIsOpenSearch] = useState(false);
   const { user, isLoading } = useContext(AuthContext);
   const { showMessage } = useMessage();
+  const [cart, setCart] = useState([]);
 
   const navLinks = [
     { to: "/", text: "Home" },
@@ -32,6 +34,26 @@ export const NavBar = () => {
     }
   };
 
+  //fetch carts
+  useEffect(() => {
+    const fetchCarts = async () => {
+      try {
+        const carts = await fetchAllCarts();
+        if (carts && carts.success && carts.data) {
+          setCart(carts.data);
+        }
+      } catch (error) {
+        console.log(error);
+        setCart([]);
+      }
+    };
+    fetchCarts();
+
+    // Listen for custom event
+    window.addEventListener("cartUpdated", fetchCarts);
+    return () => window.removeEventListener("cartUpdated", fetchCarts);
+  }, []);
+
   return (
     <nav className="fixed top-0 left-0 w-full z-50 bg-white text-black py-4 px-12 flex items-center justify-between border-b border-gray-100 shadow-sm font-sans">
       {/* === UPDATED: Logo Section === */}
@@ -40,10 +62,10 @@ export const NavBar = () => {
         className="flex items-center gap-1.5 group cursor-pointer"
       >
         <span className="text-2xl lg:text-[28px] font-black text-gray-900 tracking-tighter">
-          Shree<span className="text-xl inline-block ml-1">🏪</span>
+          Sai<span className="text-xl inline-block ml-1"></span>
         </span>
         <span className="text-2xl lg:text-[28px] font-extrabold text-pink-600 tracking-tight">
-          Sai Parlour
+          Parlour
         </span>
       </NavLink>
       {/* ============================= */}
@@ -121,12 +143,12 @@ export const NavBar = () => {
           </div>
         )}
 
-        <button
+        {/* <button
           onClick={() => setIsOpenSearch(!isOpenSearch)}
           className="text-gray-700 hover:text-pink-600 transition-colors p-1 cursor-pointer"
         >
           <CiSearch size={24} />
-        </button>
+        </button> */}
         <NavLink
           to={"/profile"}
           className="text-gray-700 hover:text-pink-600 transition-colors p-1 cursor-pointer"
@@ -141,7 +163,7 @@ export const NavBar = () => {
         >
           <CiShoppingCart size={24} />
           <span className="absolute -top-1 -right-1 bg-pink-600 text-white rounded-full w-[18px] h-[18px] flex items-center justify-center text-[10px] font-bold group-hover:bg-pink-700 transition-colors pointer-events-none">
-            0
+            {cart ? cart.length : 0}
           </span>
         </NavLink>
 

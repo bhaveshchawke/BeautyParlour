@@ -197,3 +197,83 @@ export const deleteProduct = async (id) => {
     throw new Error(error.message);
   }
 };
+// added to cart api__________________________________________________
+export const addToCart = async (id) => {
+  try {
+    const response = await axios.post(
+      `${backendUrl}/admin/addtocart`,
+      { id },
+      { withCredentials: true },
+    );
+    return response.data;
+  } catch (error) {
+    if (error.response && error.response.data && error.response.data.error) {
+      throw new Error(error.response.data.error);
+    }
+    throw new Error(error.message);
+  }
+};
+//__ fethcing carts_____________________
+export const fetchAllCarts = async () => {
+  try {
+    const carts = await axios.get(`${backendUrl}/admin/fetchcarts`, {
+      withCredentials: true,
+    });
+    return carts.data;
+  } catch (error) {
+    if (error.response && error.response.data && error.response.data.error) {
+      throw new Error(error.response.data.error);
+    }
+    throw new Error(error.message);
+  }
+};
+
+// for toggling product status//
+export const toogleProductStatus = async (id) => {
+  try {
+    const response = await axios.post(
+      `${backendUrl}/admin/toogleproductptatus`,
+      { id },
+      { withCredentials: true },
+    );
+    return response.data;
+  } catch (error) {
+    if (error.response && error.response.data && error.response.data.error) {
+      throw new Error(error.response.data.error);
+    }
+    throw new Error(error.message);
+  }
+};
+//__for-fetching -all-orders_________________________________________________________
+export const fetchOrders = async () => {
+  try {
+    const orders = await axios.get(`${backendUrl}/admin/fetchorders`, {
+      withCredentials: true,
+    });
+    return orders.data;
+  } catch (error) {
+    if (error.response && error.response.data && error.response.data.error) {
+      throw new Error(error.response.data.error);
+    }
+    throw new Error(error.message);
+  }
+};
+
+// update order status
+export const updateOrderStatusApi = async (orderId, newStatus) => {
+  try {
+    const response = await axios.put(
+      `${backendUrl}/admin/update-order-status`,
+      { orderId, newStatus },
+      {
+        withCredentials: true,
+      }
+    );
+    return response.data;
+  } catch (error) {
+    if (error.response && error.response.data && error.response.data.message) {
+      return { success: false, message: error.response.data.message };
+    }
+    return { success: false, message: error.message };
+  }
+};
