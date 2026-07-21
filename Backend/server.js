@@ -21,6 +21,9 @@ server.use(helmet());
 // Request monitoring
 server.use(morgan("dev"));
 
+// Trust proxy required for express-rate-limit on Vercel
+server.set("trust proxy", 1);
+
 // Global Rate Limiting - DDoS protection
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
@@ -41,7 +44,8 @@ server.use(
     cookie: {
       maxAge: 1000 * 60 * 60 * 24,
       httpOnly: true,
-      // secure: process.env.NODE_ENV === "production", // Uncomment in production with HTTPS
+      secure: process.env.NODE_ENV === "production", // Required for cross-origin
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax", // Required for Vercel
     },
   }),
 );
@@ -68,6 +72,12 @@ server.use("/api/appointment", appointmentRoute);
 server.use("/api/admin", adminRoute);
 server.use("/api/services", serviceRoute);
 server.use("/api/product", productRoute);
+
+// Root route to check if backend is running (fixes the 404 on Homepage)
+server.get("/", (req, res) => {
+  res.send("Beauty Parlour Backend is Running Perfectly! 🚀");
+});
+
 const PORT = process.env.PORT || 3000;
 
 // Vercel Serverless Fix: Connect to DB outside of server.listen

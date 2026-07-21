@@ -29,7 +29,8 @@ export const validateOtp = async (data) => {
     return response.data;
   } catch (error) {
     if (error.response && error.response.data && error.response.data.error) {
-      throw new Error(error.response.data.error);
+      const errMsg = typeof error.response.data.error === 'object' ? JSON.stringify(error.response.data.error) : error.response.data.error;
+      throw new Error(errMsg);
     } else {
       throw new Error(error.message);
     }
@@ -45,9 +46,11 @@ export const sendLogindata = async (data) => {
     return response.data;
   } catch (error) {
     if (error.response && error.response.data && error.response.data.error) {
-      throw new Error(error.response.data.error);
+      const errMsg = typeof error.response.data.error === 'object' ? JSON.stringify(error.response.data.error) : error.response.data.error;
+      throw new Error(errMsg);
     } else {
-      throw new Error(error.message);
+      const fallbackMsg = typeof error.response?.data === 'string' ? error.response.data : error.message;
+      throw new Error(fallbackMsg);
     }
   }
 };
