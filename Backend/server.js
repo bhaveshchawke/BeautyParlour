@@ -70,11 +70,17 @@ server.use("/api/services", serviceRoute);
 server.use("/api/product", productRoute);
 const PORT = process.env.PORT || 3000;
 
-server.listen(PORT, async () => {
-  try {
-    await db();
-    console.log(`server is listning on port:${PORT}`);
-  } catch (error) {
-    console.error(error);
-  }
-});
+// Vercel Serverless Fix: Connect to DB outside of server.listen
+db()
+  .then(() => console.log("Database connected successfully"))
+  .catch((err) => console.error("Database connection failed:", err));
+
+// Only run listen in local environment (Vercel uses module.exports)
+if (process.env.NODE_ENV !== "production") {
+  server.listen(PORT, () => {
+    console.log(`Server is listening on port: ${PORT}`);
+  });
+}
+
+// Export the Express API for Vercel Serverless functions
+module.exports = server;
