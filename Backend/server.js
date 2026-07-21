@@ -5,8 +5,30 @@ const session = require("express-session");
 const MongoStore = require("connect-mongo").default || require("connect-mongo");
 const db = require("./config/db");
 const cors = require("cors");
+
+// Security and Performance packages
+const helmet = require("helmet");
+const rateLimit = require("express-rate-limit");
+const compression = require("compression");
+const morgan = require("morgan");
+
 //middleware//
 dotenv.config();
+
+// Security HTTP headers
+server.use(helmet());
+
+// Request monitoring
+server.use(morgan("dev"));
+
+// Global Rate Limiting - DDoS protection
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 500, // Global limit of 500 requests per 15 minutes per IP
+  message: "Too many requests from this IP, please try again after 15 minutes",
+});
+server.use("/api", limiter);
+
 server.use(
   session({
     secret: process.env.SESSION_SECRET,
@@ -19,10 +41,15 @@ server.use(
     cookie: {
       maxAge: 1000 * 60 * 60 * 24,
       httpOnly: true,
+      // secure: process.env.NODE_ENV === "production", // Uncomment in production with HTTPS
     },
   }),
 );
 server.use(express.json());
+
+// Payload compression
+server.use(compression());
+
 server.use(
   cors({
     origin: process.env.FRONTEND_URL,
