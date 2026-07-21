@@ -48,7 +48,7 @@ export const TrendingProducts = () => {
       showMessage(response.message, "success");
     } catch (error) {
       console.log(error);
-      showMessage("something went wrong", "error");
+      showMessage(error.message || "something went wrong", "error");
     }
   };
 
