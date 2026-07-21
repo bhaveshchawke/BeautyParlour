@@ -6,19 +6,21 @@ import { deleteProduct } from "../services/AdminService";
 import { useMessage } from "../hooks/useMessage";
 import { toogleProductStatus } from "../services/AdminService";
 import { fetchOrders, updateOrderStatusApi } from "../services/AdminService";
+
 export const ShopManagement = () => {
   //__state__for_orders________________________________________________________
   const { showMessage } = useMessage();
   const [activeTab, setActiveTab] = useState("Products");
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+
   // ─── Dynamic States ──────────────────────────────────────────────────────
   const [products, setProducts] = useState([]);
   const [orders, setOrders] = useState([]); // for orders
   const [isLoading, setIsLoading] = useState(true);
+
   // ___edit Model____________________________________________________________
   const [isEdit, setIsEdit] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null); // Naya state
-  //_for-total money--______________________________
 
   useEffect(() => {
     const getProductsOrders = async () => {
@@ -81,6 +83,7 @@ export const ShopManagement = () => {
       showMessage(response.message || "Failed to update status", "error");
     }
   };
+
   const handleDeleteProduct = async (id) => {
     try {
       const response = await deleteProduct(id);
@@ -102,10 +105,11 @@ export const ShopManagement = () => {
 
   // ─── UI Component ──────────────────────────────────────────────────────
   return (
-    <div className="min-h-screen bg-slate-50 font-sans p-4 sm:p-8 pb-24">
+    // मोबाइल के लिए पैडिंग p-4 sm:p-8
+    <div className="min-h-screen bg-slate-50 font-sans p-4 sm:p-6 lg:p-8 pt-20 sm:pt-24 pb-24">
       <div className="max-w-7xl mx-auto">
         {/* ─── 1. Header & Stats Section ─────────────────────────────────── */}
-        <div className="mb-8">
+        <div className="mb-6 sm:mb-8 text-center sm:text-left">
           <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight">
             Shop Management
           </h1>
@@ -115,12 +119,12 @@ export const ShopManagement = () => {
           </p>
         </div>
 
-        {/* Stats Cards (4 Boxes) */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-10">
-          <div className="bg-white p-5 rounded-2xl shadow-sm border border-slate-100 flex items-center gap-4">
-            <div className="w-12 h-12 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
+        {/* Stats Cards (4 Boxes) - मोबाइल पर गैप और पैडिंग एडजस्ट की है */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6 mb-8 sm:mb-10">
+          <div className="bg-white p-4 sm:p-5 rounded-2xl shadow-sm border border-slate-100 flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4">
+            <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
               <svg
-                className="w-6 h-6"
+                className="w-5 h-5 sm:w-6 sm:h-6"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -134,20 +138,20 @@ export const ShopManagement = () => {
               </svg>
             </div>
             <div>
-              <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-0.5">
+              <p className="text-[10px] sm:text-xs font-bold text-slate-400 uppercase tracking-wider mb-0.5">
                 Total Products
               </p>
-              <p className="text-2xl font-black text-slate-900">
+              <p className="text-xl sm:text-2xl font-black text-slate-900">
                 {totalProductsCount}
               </p>
             </div>
           </div>
 
-          <div className="bg-white p-5 rounded-2xl shadow-sm border border-rose-100 flex items-center gap-4 relative overflow-hidden">
-            <div className="absolute right-0 top-0 w-2 h-full bg-rose-500"></div>
-            <div className="w-12 h-12 rounded-full bg-rose-50 text-rose-600 flex items-center justify-center shrink-0">
+          <div className="bg-white p-4 sm:p-5 rounded-2xl shadow-sm border border-rose-100 flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4 relative overflow-hidden">
+            <div className="absolute right-0 top-0 w-1.5 sm:w-2 h-full bg-rose-500"></div>
+            <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-rose-50 text-rose-600 flex items-center justify-center shrink-0">
               <svg
-                className="w-6 h-6"
+                className="w-5 h-5 sm:w-6 sm:h-6"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -161,20 +165,19 @@ export const ShopManagement = () => {
               </svg>
             </div>
             <div>
-              <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-0.5">
+              <p className="text-[10px] sm:text-xs font-bold text-slate-400 uppercase tracking-wider mb-0.5">
                 Out of Stock
               </p>
-              <p className="text-2xl font-black text-rose-600">
+              <p className="text-xl sm:text-2xl font-black text-rose-600">
                 {outOfStockCount}
               </p>
             </div>
           </div>
 
-          {/* Dummy Stats for Orders */}
-          <div className="bg-white p-5 rounded-2xl shadow-sm border border-slate-100 flex items-center gap-4">
-            <div className="w-12 h-12 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0">
+          <div className="bg-white p-4 sm:p-5 rounded-2xl shadow-sm border border-slate-100 flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4">
+            <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0">
               <svg
-                className="w-6 h-6"
+                className="w-5 h-5 sm:w-6 sm:h-6"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -188,17 +191,17 @@ export const ShopManagement = () => {
               </svg>
             </div>
             <div>
-              <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-0.5">
+              <p className="text-[10px] sm:text-xs font-bold text-slate-400 uppercase tracking-wider mb-0.5">
                 New Orders
               </p>
-              <p className="text-2xl font-black text-slate-900">2</p>
+              <p className="text-xl sm:text-2xl font-black text-slate-900">2</p>
             </div>
           </div>
 
-          <div className="bg-white p-5 rounded-2xl shadow-sm border border-slate-100 flex items-center gap-4">
-            <div className="w-12 h-12 rounded-full bg-amber-50 text-amber-600 flex items-center justify-center shrink-0">
+          <div className="bg-white p-4 sm:p-5 rounded-2xl shadow-sm border border-slate-100 flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4">
+            <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-amber-50 text-amber-600 flex items-center justify-center shrink-0">
               <svg
-                className="w-6 h-6"
+                className="w-5 h-5 sm:w-6 sm:h-6"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -212,14 +215,15 @@ export const ShopManagement = () => {
               </svg>
             </div>
             <div>
-              <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-0.5">
+              <p className="text-[10px] sm:text-xs font-bold text-slate-400 uppercase tracking-wider mb-0.5">
                 Total Sales
               </p>
-              <p className="text-2xl font-black text-slate-900">
+              <p className="text-xl sm:text-2xl font-black text-slate-900">
                 ₹
                 {orders
                   .filter((item) => item.paymentStatus === "Paid")
-                  .reduce((acc, curr) => acc + curr.totalAmount, 0)}
+                  .reduce((acc, curr) => acc + curr.totalAmount, 0)
+                  .toLocaleString("en-IN")}
               </p>
             </div>
           </div>
@@ -232,7 +236,7 @@ export const ShopManagement = () => {
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
-                className={`flex-1 sm:px-8 py-2.5 rounded-full text-sm font-bold transition-all duration-300 ${
+                className={`flex-1 sm:px-8 py-2.5 rounded-full text-xs sm:text-sm font-bold transition-all duration-300 ${
                   activeTab === tab
                     ? "bg-white text-slate-900 shadow-sm"
                     : "text-slate-500 hover:text-slate-900"
@@ -268,17 +272,27 @@ export const ShopManagement = () => {
 
         {/* ─── 3. Products List Table (Tab 1) ────────────────────────────── */}
         {activeTab === "Products" && (
-          <div className="bg-white rounded-3xl shadow-sm border border-slate-200 overflow-hidden animate-in fade-in duration-300">
-            <div className="overflow-x-auto">
-              <table className="w-full text-left border-collapse">
+          <div className="bg-white rounded-2xl sm:rounded-3xl shadow-sm border border-slate-200 overflow-hidden animate-in fade-in duration-300">
+            {/* overflow-x-auto से मोबाइल पर टेबल हॉरिजॉन्टल स्क्रॉल होगी */}
+            <div className="overflow-x-auto custom-scrollbar">
+              <table className="w-full text-left border-collapse min-w-[750px]">
                 <thead>
-                  {/* Changed text-[11px] to text-sm */}
-                  <tr className="bg-slate-50 border-b border-slate-200 text-slate-500 text-sm uppercase tracking-widest font-bold">
-                    <th className="py-4 px-6">Product Details</th>
-                    <th className="py-4 px-6">Pricing</th>
-                    <th className="py-4 px-6 text-center">Stock Status</th>
-                    <th className="py-4 px-6 text-center">Visibility</th>
-                    <th className="py-4 px-6 text-right">Actions</th>
+                  <tr className="bg-slate-50 border-b border-slate-200 text-slate-500 text-xs sm:text-sm uppercase tracking-widest font-bold">
+                    <th className="py-3 px-4 sm:py-4 sm:px-6 whitespace-nowrap">
+                      Product Details
+                    </th>
+                    <th className="py-3 px-4 sm:py-4 sm:px-6 whitespace-nowrap">
+                      Pricing
+                    </th>
+                    <th className="py-3 px-4 sm:py-4 sm:px-6 text-center whitespace-nowrap">
+                      Stock Status
+                    </th>
+                    <th className="py-3 px-4 sm:py-4 sm:px-6 text-center whitespace-nowrap">
+                      Visibility
+                    </th>
+                    <th className="py-3 px-4 sm:py-4 sm:px-6 text-right whitespace-nowrap">
+                      Actions
+                    </th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100">
@@ -286,7 +300,7 @@ export const ShopManagement = () => {
                     <tr>
                       <td
                         colSpan="5"
-                        className="py-10 text-center text-base text-slate-500 font-medium"
+                        className="py-10 text-center text-sm sm:text-base text-slate-500 font-medium"
                       >
                         Loading Products...
                       </td>
@@ -295,7 +309,7 @@ export const ShopManagement = () => {
                     <tr>
                       <td
                         colSpan="5"
-                        className="py-10 text-center text-base text-slate-500 font-medium"
+                        className="py-10 text-center text-sm sm:text-base text-slate-500 font-medium"
                       >
                         No products found. Please add a new product.
                       </td>
@@ -307,35 +321,28 @@ export const ShopManagement = () => {
                         className="hover:bg-slate-50/50 transition-colors group"
                       >
                         {/* Image, Brand, Name, Badge & Category */}
-                        <td className="py-4 px-6">
-                          <div className="flex items-center gap-4">
+                        <td className="py-3 px-4 sm:py-4 sm:px-6">
+                          <div className="flex items-center gap-3 sm:gap-4 whitespace-nowrap">
                             <img
                               src={product.productImage}
                               alt={product.productName}
-                              className="w-14 h-14 rounded-xl object-cover border border-slate-100 shadow-sm"
+                              className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl object-cover border border-slate-100 shadow-sm shrink-0"
                             />
                             <div>
-                              {/* Brand Name - Changed text-[10px] to text-xs */}
-                              <p className="text-xs text-slate-500 font-bold uppercase tracking-wider mb-0.5">
+                              <p className="text-[10px] sm:text-xs text-slate-500 font-bold uppercase tracking-wider mb-0.5">
                                 {product.brand}
                               </p>
-
-                              {/* Product Name & Badge */}
                               <div className="flex items-center gap-2 mb-1">
-                                {/* Changed to text-base for product name */}
-                                <p className="text-base font-bold text-slate-900">
+                                <p className="text-sm sm:text-base font-bold text-slate-900">
                                   {product.productName}
                                 </p>
                                 {product.badge && product.badge !== "None" && (
-                                  /* Changed text-[9px] to text-xs */
-                                  <span className="bg-rose-100 text-rose-600 text-xs font-bold uppercase px-2 py-0.5 rounded tracking-widest">
+                                  <span className="bg-rose-100 text-rose-600 text-[10px] sm:text-xs font-bold uppercase px-2 py-0.5 rounded tracking-widest">
                                     {product.badge}
                                   </span>
                                 )}
                               </div>
-
-                              {/* Category - Changed text-[10px] to text-xs */}
-                              <span className="inline-block px-2.5 py-1 bg-slate-100 text-slate-500 text-xs font-bold uppercase tracking-wider rounded">
+                              <span className="inline-block px-2 py-0.5 sm:px-2.5 sm:py-1 bg-slate-100 text-slate-500 text-[10px] sm:text-xs font-bold uppercase tracking-wider rounded">
                                 {product.productCategory}
                               </span>
                             </div>
@@ -343,27 +350,25 @@ export const ShopManagement = () => {
                         </td>
 
                         {/* Pricing */}
-                        <td className="py-4 px-6">
+                        <td className="py-3 px-4 sm:py-4 sm:px-6 whitespace-nowrap">
                           <div className="flex flex-col">
-                            {/* Changed to text-base */}
-                            <span className="text-base font-bold text-slate-900">
-                              ₹{product.salePrice?.toLocaleString()}
+                            <span className="text-sm sm:text-base font-bold text-slate-900">
+                              ₹{product.salePrice?.toLocaleString("en-IN")}
                             </span>
                             {product.originalPrice !== product.salePrice && (
-                              /* Changed text-[11px] to text-sm */
-                              <span className="text-sm text-slate-400 line-through font-medium mt-0.5">
-                                ₹{product.originalPrice?.toLocaleString()}
+                              <span className="text-xs sm:text-sm text-slate-400 line-through font-medium mt-0.5">
+                                ₹
+                                {product.originalPrice?.toLocaleString("en-IN")}
                               </span>
                             )}
                           </div>
                         </td>
 
                         {/* Stock Status */}
-                        <td className="py-4 px-6 text-center">
-                          <div className="flex flex-col items-center gap-1.5">
-                            {/* Changed text-[10px] to text-xs */}
+                        <td className="py-3 px-4 sm:py-4 sm:px-6 text-center whitespace-nowrap">
+                          <div className="flex flex-col items-center gap-1 sm:gap-1.5">
                             <span
-                              className={`px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider ${
+                              className={`px-2.5 py-1 sm:px-3 rounded-full text-[10px] sm:text-xs font-bold uppercase tracking-wider ${
                                 product.stockQuantity === 0
                                   ? "bg-rose-50 text-rose-600"
                                   : product.stockQuantity < 5
@@ -377,26 +382,25 @@ export const ShopManagement = () => {
                                   ? "Low Stock"
                                   : "In Stock"}
                             </span>
-                            {/* Changed text-[11px] to text-sm */}
-                            <span className="text-sm text-slate-500 font-medium">
+                            <span className="text-xs sm:text-sm text-slate-500 font-medium">
                               {product.stockQuantity} units left
                             </span>
                           </div>
                         </td>
 
                         {/* Active Toggle */}
-                        <td className="py-4 px-6">
+                        <td className="py-3 px-4 sm:py-4 sm:px-6 whitespace-nowrap">
                           <div className="flex justify-center">
                             <button
                               onClick={() => toggleProductStatus(product._id)}
-                              className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-300 ease-in-out focus:outline-none ${
+                              className={`relative inline-flex h-5 w-9 sm:h-6 sm:w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-300 ease-in-out focus:outline-none ${
                                 product.active ? "bg-rose-500" : "bg-slate-300"
                               }`}
                             >
                               <span
-                                className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow-sm ring-0 transition duration-300 ease-in-out ${
+                                className={`pointer-events-none inline-block h-4 w-4 sm:h-5 sm:w-5 transform rounded-full bg-white shadow-sm ring-0 transition duration-300 ease-in-out ${
                                   product.active
-                                    ? "translate-x-5"
+                                    ? "translate-x-4 sm:translate-x-5"
                                     : "translate-x-0"
                                 }`}
                               />
@@ -405,17 +409,17 @@ export const ShopManagement = () => {
                         </td>
 
                         {/* Actions */}
-                        <td className="py-4 px-6 flex justify-end gap-2">
+                        <td className="py-3 px-4 sm:py-4 sm:px-6 flex justify-end gap-1 sm:gap-2 whitespace-nowrap">
                           <button
                             onClick={() => {
                               setSelectedProduct(product);
                               setIsEdit(true);
                             }}
-                            className="p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors cursor-pointer"
+                            className="p-1.5 sm:p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors cursor-pointer"
                             title="Edit"
                           >
                             <svg
-                              className="w-5 h-5"
+                              className="w-4 h-4 sm:w-5 sm:h-5"
                               fill="none"
                               stroke="currentColor"
                               viewBox="0 0 24 24"
@@ -430,11 +434,11 @@ export const ShopManagement = () => {
                           </button>
                           <button
                             onClick={() => handleDeleteProduct(product._id)}
-                            className="p-2 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors cursor-pointer"
+                            className="p-1.5 sm:p-2 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors cursor-pointer"
                             title="Delete"
                           >
                             <svg
-                              className="w-5 h-5"
+                              className="w-4 h-4 sm:w-5 sm:h-5"
                               fill="none"
                               stroke="currentColor"
                               viewBox="0 0 24 24"
@@ -459,92 +463,117 @@ export const ShopManagement = () => {
 
         {/* ─── 4. Orders Management Tab (Tab 2) ──────────────────────────── */}
         {activeTab === "Orders" && (
-          <div className="bg-white rounded-3xl shadow-sm border border-slate-200 overflow-hidden animate-in fade-in duration-300">
-            <div className="overflow-x-auto">
-              <table className="w-full text-left border-collapse">
+          <div className="bg-white rounded-2xl sm:rounded-3xl shadow-sm border border-slate-200 overflow-hidden animate-in fade-in duration-300">
+            {/* overflow-x-auto से मोबाइल पर टेबल हॉरिजॉन्टल स्क्रॉल होगी */}
+            <div className="overflow-x-auto custom-scrollbar">
+              <table className="w-full text-left border-collapse min-w-[800px]">
                 <thead>
-                  {/* Changed text-[11px] to text-sm */}
-                  <tr className="bg-slate-50 border-b border-slate-200 text-slate-500 text-sm uppercase tracking-widest font-bold">
-                    <th className="py-4 px-6">Order ID & Date</th>
-                    <th className="py-4 px-6">Customer & Items</th>
-                    <th className="py-4 px-6">Total Amount</th>
-                    <th className="py-4 px-6">Payment Status</th>
-                    <th className="py-4 px-6 text-right">Update Status</th>
+                  <tr className="bg-slate-50 border-b border-slate-200 text-slate-500 text-[11px] sm:text-sm uppercase tracking-widest font-bold">
+                    <th className="py-3 px-4 sm:py-4 sm:px-6 whitespace-nowrap">
+                      Order ID & Date
+                    </th>
+                    <th className="py-3 px-4 sm:py-4 sm:px-6 whitespace-nowrap">
+                      Customer & Items
+                    </th>
+                    <th className="py-3 px-4 sm:py-4 sm:px-6 whitespace-nowrap">
+                      Total Amount
+                    </th>
+                    <th className="py-3 px-4 sm:py-4 sm:px-6 whitespace-nowrap">
+                      Payment Status
+                    </th>
+                    <th className="py-3 px-4 sm:py-4 sm:px-6 text-right whitespace-nowrap">
+                      Update Status
+                    </th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100">
-                  {orders.map((order) => (
-                    <tr
-                      key={order._id}
-                      className="hover:bg-slate-50/50 transition-colors group"
-                    >
-                      <td className="py-4 px-6">
-                        {/* Changed to text-base */}
-                        <p className="text-base font-bold text-slate-900 mb-0.5">
-                          {order._id}
-                        </p>
-                        {/* Changed text-[11px] to text-sm */}
-                        <p className="text-sm text-slate-500 font-medium">
-                          {order.createdAt
-                            ? new Date(order.createdAt).toLocaleString()
-                            : "N/A"}
-                        </p>
-                      </td>
-                      <td className="py-4 px-6">
-                        <p className="font-bold text-slate-900 mb-1">
-                          {order.customerName}
-                        </p>
-                        <p className="text-[12px] text-slate-500 font-medium mb-1">
-                          📞 {order.customerPhone}
-                        </p>
-                        <p className="text-[11px] text-slate-500 leading-relaxed max-w-xs">
-                          {order.items
-                            .map(
-                              (item) =>
-                                `${item.productName} (x${item.quantity})`,
-                            )
-                            .join(", ")}
-                        </p>
-                      </td>
-                      {/* Changed to text-base */}
-                      <td className="py-4 px-6 text-base font-black text-emerald-600">
-                        ₹{order.totalAmount?.toLocaleString()}
-                      </td>
-                      <td className="py-4 px-6">
-                        <span className="text-sm font-bold text-slate-700 uppercase tracking-wider">
-                          {order.paymentStatus || "N/A"}
-                        </span>
-                      </td>
-                      <td className="py-4 px-6 text-right">
-                        {/* Changed text-xs to text-sm and increased padding */}
-                        <select
-                          value={order.orderStatus}
-                          onChange={(e) =>
-                            handleStatusChange(order._id, e.target.value)
-                          }
-                          className={`text-sm font-bold uppercase tracking-wider px-4 py-2 rounded-lg border outline-none cursor-pointer appearance-none text-center ${
-                            order.orderStatus === "Pending"
-                              ? "bg-amber-50 text-amber-700 border-amber-200"
-                              : order.orderStatus === "Shipped"
-                                ? "bg-blue-50 text-blue-700 border-blue-200"
-                                : "bg-emerald-50 text-emerald-700 border-emerald-200"
-                          }`}
-                        >
-                          <option value="Pending">Pending</option>
-                          <option value="Processing">Processing</option>
-                          <option value="Shipped">Shipped</option>
-                          <option value="Delivered">Delivered</option>
-                          <option value="Cancelled">Cancelled</option>
-                        </select>
+                  {orders.length === 0 ? (
+                    <tr>
+                      <td
+                        colSpan="5"
+                        className="py-10 text-center text-sm sm:text-base text-slate-500 font-medium"
+                      >
+                        No orders found.
                       </td>
                     </tr>
-                  ))}
+                  ) : (
+                    orders.map((order) => (
+                      <tr
+                        key={order._id}
+                        className="hover:bg-slate-50/50 transition-colors group"
+                      >
+                        <td className="py-3 px-4 sm:py-4 sm:px-6 whitespace-nowrap">
+                          <p className="text-sm sm:text-base font-bold text-slate-900 mb-0.5">
+                            {order._id}
+                          </p>
+                          <p className="text-[11px] sm:text-sm text-slate-500 font-medium">
+                            {order.createdAt
+                              ? new Date(order.createdAt).toLocaleString()
+                              : "N/A"}
+                          </p>
+                        </td>
+                        <td className="py-3 px-4 sm:py-4 sm:px-6">
+                          <p className="text-sm sm:text-base font-bold text-slate-900 mb-1 whitespace-nowrap">
+                            {order.customerName}
+                          </p>
+                          <p className="text-[11px] sm:text-[12px] text-slate-500 font-medium mb-1 whitespace-nowrap">
+                            📞 {order.customerPhone}
+                          </p>
+                          {/* Items ki string lambi ho sakti hai isliye min-w diya hai aur whitespace-normal rakha hai */}
+                          <p className="text-[10px] sm:text-[11px] text-slate-500 leading-relaxed min-w-[200px] max-w-xs whitespace-normal">
+                            {order.items
+                              .map(
+                                (item) =>
+                                  `${item.productName} (x${item.quantity})`,
+                              )
+                              .join(", ")}
+                          </p>
+                        </td>
+                        <td className="py-3 px-4 sm:py-4 sm:px-6 text-sm sm:text-base font-black text-emerald-600 whitespace-nowrap">
+                          ₹{order.totalAmount?.toLocaleString("en-IN")}
+                        </td>
+                        <td className="py-3 px-4 sm:py-4 sm:px-6 whitespace-nowrap">
+                          <span
+                            className={`text-[11px] sm:text-sm font-bold uppercase tracking-wider px-2 py-1 rounded ${
+                              order.paymentStatus === "Paid"
+                                ? "text-emerald-700 bg-emerald-50"
+                                : "text-amber-700 bg-amber-50"
+                            }`}
+                          >
+                            {order.paymentStatus || "N/A"}
+                          </span>
+                        </td>
+                        <td className="py-3 px-4 sm:py-4 sm:px-6 text-right whitespace-nowrap">
+                          <select
+                            value={order.orderStatus}
+                            onChange={(e) =>
+                              handleStatusChange(order._id, e.target.value)
+                            }
+                            className={`text-[11px] sm:text-sm font-bold uppercase tracking-wider px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg border outline-none cursor-pointer appearance-none text-center min-w-[120px] shrink-0 ${
+                              order.orderStatus === "Pending"
+                                ? "bg-amber-50 text-amber-700 border-amber-200"
+                                : order.orderStatus === "Shipped"
+                                  ? "bg-blue-50 text-blue-700 border-blue-200"
+                                  : "bg-emerald-50 text-emerald-700 border-emerald-200"
+                            }`}
+                          >
+                            <option value="Pending">Pending</option>
+                            <option value="Processing">Processing</option>
+                            <option value="Shipped">Shipped</option>
+                            <option value="Delivered">Delivered</option>
+                            <option value="Cancelled">Cancelled</option>
+                          </select>
+                        </td>
+                      </tr>
+                    ))
+                  )}
                 </tbody>
               </table>
             </div>
           </div>
         )}
       </div>
+
       {/* ─── 5. Add Product Modal ────────────────────────────────────────── */}
       {isAddModalOpen && (
         <Addproduct onClose={() => setIsAddModalOpen(false)} />

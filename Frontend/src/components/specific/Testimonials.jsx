@@ -34,11 +34,14 @@ export const Testimonials = () => {
 
   return (
     // बहुत ही हल्का सा पिंक/ग्रे बैकग्राउंड ताकि सफेद वाले प्रोडक्ट्स सेक्शन से अलग दिखे
-    <section className="bg-rose-50/30 font-sans py-20 lg:py-28">
-      <div className="max-w-6xl mx-auto px-6 lg:px-8">
+    // मोबाइल के लिए py-12 किया गया है
+    <section className="bg-rose-50/30 font-sans py-12 md:py-20 lg:py-28">
+      {/* मोबाइल के लिए px-4 किया गया है */}
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
-        <div className="text-center mb-16">
-          <span className="text-xs font-medium tracking-[0.2em] text-pink-600 uppercase mb-3 block">
+        {/* मोबाइल पर mb-10 ताकि टाइटल और कार्ड्स के बीच गैप सही रहे */}
+        <div className="text-center mb-10 md:mb-16">
+          <span className="text-xs font-medium tracking-[0.2em] text-pink-600 uppercase mb-2 md:mb-3 block">
             Real Experiences
           </span>
           <h2 className="text-3xl lg:text-4xl font-light text-gray-900 tracking-tight">
@@ -48,46 +51,50 @@ export const Testimonials = () => {
         </div>
 
         {/* Testimonial Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-10">
+        {/* मोबाइल पर गैप-6 किया गया है ताकि कार्ड्स बहुत दूर न हों */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 lg:gap-10">
           {reviews.map((testimonial) => (
             <div
               key={testimonial.id}
-              className="bg-white p-8 rounded-2xl border border-gray-100 shadow-[0_10px_40px_-20px_rgba(0,0,0,0.05)] flex flex-col relative"
+              // मोबाइल पर पैडिंग p-6 की गई है ताकि टेक्स्ट को थोड़ी ज्यादा जगह मिले
+              className="bg-white p-6 sm:p-8 rounded-2xl border border-gray-100 shadow-[0_10px_40px_-20px_rgba(0,0,0,0.05)] flex flex-col relative"
             >
               {/* Quote Icon (Decorative) */}
-              <div className="text-6xl text-pink-100 absolute top-4 right-6 font-serif leading-none">
+              <div className="text-5xl sm:text-6xl text-pink-100 absolute top-4 right-6 font-serif leading-none">
                 "
               </div>
 
               {/* Star Rating */}
-              <div className="flex gap-1 mb-6">
+              <div className="flex gap-1 mb-5 sm:mb-6">
                 {[...Array(Math.floor(testimonial.rating))].map((_, i) => (
-                  <span key={i} className="text-pink-500 text-sm">
+                  <span key={i} className="text-pink-500 text-sm sm:text-base">
                     ★
                   </span>
                 ))}
                 {testimonial.rating % 1 !== 0 && (
-                  <span className="text-pink-500 text-sm">★</span>
+                  <span className="text-pink-500 text-sm sm:text-base">★</span>
                 )}
               </div>
 
               {/* Review Text */}
-              <p className="text-gray-600 font-light leading-relaxed text-sm mb-8 flex-grow relative z-10">
+              <p className="text-gray-600 font-light leading-relaxed text-sm mb-6 sm:mb-8 flex-grow relative z-10">
                 "{testimonial.review}"
               </p>
 
               {/* Client Profile */}
-              <div className="flex items-center gap-4 mt-auto pt-6 border-t border-gray-50">
+              <div className="flex items-center gap-4 mt-auto pt-5 sm:pt-6 border-t border-gray-50">
                 <img
                   src={testimonial.image}
                   alt={testimonial.name}
-                  className="w-12 h-12 rounded-full object-cover border-2 border-pink-50"
+                  className="w-10 h-10 sm:w-12 sm:h-12 rounded-full object-cover border-2 border-pink-50"
                 />
                 <div>
                   <h4 className="text-sm font-semibold text-gray-900">
                     {testimonial.name}
                   </h4>
-                  <p className="text-xs text-gray-500">{testimonial.role}</p>
+                  <p className="text-[11px] sm:text-xs text-gray-500">
+                    {testimonial.role}
+                  </p>
                 </div>
               </div>
             </div>

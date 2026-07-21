@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useMessage } from "../hooks/useMessage";
 import { addService, editService } from "../services/AdminService";
 import { Loader } from "../components/common/Loader";
+
 export const AddService = ({ onClose, service }) => {
   //__LoadingState___________________________________________
   const [loading, setLoading] = useState(false);
@@ -62,7 +63,7 @@ export const AddService = ({ onClose, service }) => {
       // Backend API call (Smart Check: Add karna hai ya Edit?)
       setLoading(true);
       let response;
-      
+
       if (service && service._id) {
         // Agar modal me purani service aayi thi, yani ki Edit Mode
         response = await editService(service._id, formData);
@@ -85,16 +86,19 @@ export const AddService = ({ onClose, service }) => {
 
   return (
     <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-3xl w-full max-w-md p-6 sm:p-8 shadow-2xl animate-in fade-in zoom-in duration-200">
+      {/* मोबाइल के लिए p-5, rounded-2xl और max-h-[90vh] overflow-y-auto जोड़ा गया है ताकि फॉर्म स्क्रीन से बाहर न जाए */}
+      <div className="bg-white rounded-2xl sm:rounded-3xl w-full max-w-md p-5 sm:p-8 shadow-2xl animate-in fade-in zoom-in duration-200 overflow-y-auto max-h-[90vh] custom-scrollbar">
         {/* ─── Header (Title + Close Button) ─── */}
-        <div className="flex justify-between items-center mb-6 border-b border-slate-100 pb-4">
-          <h2 className="text-xl font-bold text-slate-900">Add New Service</h2>
+        <div className="flex justify-between items-center mb-5 sm:mb-6 border-b border-slate-100 pb-3 sm:pb-4">
+          <h2 className="text-lg sm:text-xl font-bold text-slate-900">
+            {service ? "Edit Service" : "Add New Service"}
+          </h2>
           <button
             onClick={onClose}
-            className="text-slate-400 hover:text-rose-500 transition-colors cursor-pointer"
+            className="text-slate-400 hover:text-rose-500 transition-colors cursor-pointer p-1"
           >
             <svg
-              className="w-6 h-6"
+              className="w-5 h-5 sm:w-6 sm:h-6"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -109,10 +113,11 @@ export const AddService = ({ onClose, service }) => {
           </button>
         </div>
 
-        <form onSubmit={handleOnSubmit} className="space-y-5">
+        {/* मोबाइल पर gap को space-y-4 कर दिया है */}
+        <form onSubmit={handleOnSubmit} className="space-y-4 sm:space-y-5">
           {/* Service Title */}
           <div>
-            <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">
+            <label className="block text-[11px] sm:text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">
               Service Title
             </label>
             <input
@@ -122,14 +127,14 @@ export const AddService = ({ onClose, service }) => {
               name="serviceTitle"
               required
               placeholder="e.g. Signature Gold Facial"
-              className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 outline-none focus:border-rose-400 focus:ring-2 focus:ring-rose-500/20 text-sm font-medium text-slate-900"
+              className="w-full bg-slate-50 border border-slate-200 rounded-lg sm:rounded-xl px-4 py-2.5 sm:py-3 outline-none focus:border-rose-400 focus:ring-2 focus:ring-rose-500/20 text-sm font-medium text-slate-900"
             />
           </div>
 
           {/* Price & Duration */}
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">
+              <label className="block text-[11px] sm:text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">
                 Price (₹)
               </label>
               <input
@@ -139,11 +144,11 @@ export const AddService = ({ onClose, service }) => {
                 name="servicePrice"
                 required
                 placeholder="1500"
-                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 outline-none focus:border-rose-400 focus:ring-2 focus:ring-rose-500/20 text-sm font-medium text-slate-900"
+                className="w-full bg-slate-50 border border-slate-200 rounded-lg sm:rounded-xl px-4 py-2.5 sm:py-3 outline-none focus:border-rose-400 focus:ring-2 focus:ring-rose-500/20 text-sm font-medium text-slate-900"
               />
             </div>
             <div>
-              <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">
+              <label className="block text-[11px] sm:text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">
                 Duration (Mins)
               </label>
               <input
@@ -153,21 +158,21 @@ export const AddService = ({ onClose, service }) => {
                 name="serviceDuration"
                 required
                 placeholder="45"
-                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 outline-none focus:border-rose-400 focus:ring-2 focus:ring-rose-500/20 text-sm font-medium text-slate-900"
+                className="w-full bg-slate-50 border border-slate-200 rounded-lg sm:rounded-xl px-4 py-2.5 sm:py-3 outline-none focus:border-rose-400 focus:ring-2 focus:ring-rose-500/20 text-sm font-medium text-slate-900"
               />
             </div>
           </div>
 
           {/* Service Category */}
           <div>
-            <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">
+            <label className="block text-[11px] sm:text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">
               Service Category
             </label>
             <select
               name="serviceCategory"
               value={data.serviceCategory}
               onChange={handleSubmitData}
-              className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 outline-none focus:border-rose-400 focus:ring-2 focus:ring-rose-500/20 text-sm font-medium text-slate-900 appearance-none cursor-pointer"
+              className="w-full bg-slate-50 border border-slate-200 rounded-lg sm:rounded-xl px-4 py-2.5 sm:py-3 outline-none focus:border-rose-400 focus:ring-2 focus:ring-rose-500/20 text-sm font-medium text-slate-900 appearance-none cursor-pointer"
             >
               <option value="Face">Face</option>
               <option value="Hair">Hair</option>
@@ -179,7 +184,7 @@ export const AddService = ({ onClose, service }) => {
 
           {/* Service Description */}
           <div>
-            <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">
+            <label className="block text-[11px] sm:text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">
               Description
             </label>
             <textarea
@@ -189,38 +194,39 @@ export const AddService = ({ onClose, service }) => {
               required
               rows="3"
               placeholder="Enter service details..."
-              className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 outline-none focus:border-rose-400 focus:ring-2 focus:ring-rose-500/20 text-sm font-medium text-slate-900 resize-none"
+              className="w-full bg-slate-50 border border-slate-200 rounded-lg sm:rounded-xl px-4 py-2.5 sm:py-3 outline-none focus:border-rose-400 focus:ring-2 focus:ring-rose-500/20 text-sm font-medium text-slate-900 resize-none"
             ></textarea>
           </div>
 
           {/* Service Image (Styled File Input) */}
           <div>
-            <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">
+            <label className="block text-[11px] sm:text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">
               Service Image
             </label>
             <input
               type="file"
               accept="image/*"
               onChange={(e) => setImageFile(e.target.files[0])}
-              className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 outline-none focus:border-rose-400 focus:ring-2 focus:ring-rose-500/20 text-sm font-medium text-slate-600
-                file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-bold file:bg-rose-50 file:text-rose-600 hover:file:bg-rose-100 cursor-pointer"
+              className="w-full bg-slate-50 border border-slate-200 rounded-lg sm:rounded-xl px-4 py-2.5 outline-none focus:border-rose-400 focus:ring-2 focus:ring-rose-500/20 text-sm font-medium text-slate-600
+                file:mr-4 file:py-1.5 sm:file:py-2 file:px-4 file:rounded-full file:border-0 file:text-[10px] sm:file:text-xs file:font-bold file:bg-rose-50 file:text-rose-600 hover:file:bg-rose-100 cursor-pointer"
             />
           </div>
 
           {/* ─── Footer Buttons ─── */}
-          <div className="flex justify-end gap-3 mt-8 pt-2">
+          {/* मोबाइल पर flex-col-reverse किया गया है ताकि Save बटन ऊपर और Cancel बटन नीचे रहे (UX के लिए बेस्ट) */}
+          <div className="flex flex-col-reverse sm:flex-row justify-end gap-3 mt-6 sm:mt-8 pt-2">
             <button
               type="button"
               onClick={onClose}
               disabled={loading}
-              className="px-6 py-3 text-sm font-bold text-slate-600 bg-white border border-slate-200 hover:bg-slate-50 rounded-full transition-colors cursor-pointer disabled:opacity-50"
+              className="w-full sm:w-auto px-6 py-3.5 sm:py-3 text-sm font-bold text-slate-600 bg-white border border-slate-200 hover:bg-slate-50 rounded-xl sm:rounded-full transition-colors cursor-pointer disabled:opacity-50 text-center"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={loading}
-              className="px-6 py-3 text-sm font-bold bg-rose-500 text-white hover:bg-rose-600 rounded-full transition-colors shadow-md shadow-rose-500/20 cursor-pointer disabled:opacity-70 flex items-center justify-center min-w-[120px]"
+              className="w-full sm:w-auto px-6 py-3.5 sm:py-3 text-sm font-bold bg-rose-500 text-white hover:bg-rose-600 rounded-xl sm:rounded-full transition-colors shadow-md shadow-rose-500/20 cursor-pointer disabled:opacity-70 flex items-center justify-center min-w-[120px]"
             >
               {loading ? <Loader inButton={true} /> : "Save Service"}
             </button>

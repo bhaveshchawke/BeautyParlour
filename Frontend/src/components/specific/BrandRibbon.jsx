@@ -29,24 +29,34 @@ export const BrandRibbon = () => {
   ];
 
   return (
-    // bg-gray-50 और पतले बॉर्डर से यह Hero और Services के बीच एक शानदार लाइन खींच देगा
-    <div className="w-full bg-gray-50 border-y border-gray-100 py-10 font-sans hidden md:block">
-      <div className="max-w-7xl mx-auto px-6 lg:px-12 flex items-center justify-between gap-6">
+    <div className="w-full bg-gray-50 border-y border-gray-100 py-8 md:py-10 font-sans">
+      {/* 
+        flex-nowrap और overflow-x-auto का उपयोग किया गया है, 
+        जिससे मोबाइल पर ये एक ही लाइन में (horizontal) रहेंगे और स्वाइप किए जा सकेंगे।
+      */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-12 flex items-center justify-start md:justify-between gap-8 md:gap-6 overflow-x-auto snap-x snap-mandatory scrollbar-hide">
         {features.map((feature) => (
           <div
             key={feature.id}
-            className="flex flex-col items-center text-center"
+            // min-w-[160px] दिया गया है ताकि मोबाइल पर आइटम्स सिकुड़ें नहीं
+            className="flex flex-col items-center text-center shrink-0 min-w-[160px] md:min-w-0 snap-center"
           >
             {feature.icon}
-            <h4 className="text-sm font-semibold text-gray-900 tracking-wide uppercase mb-1">
+            <h4 className="text-xs sm:text-sm font-semibold text-gray-900 tracking-wide uppercase mb-1 whitespace-nowrap">
               {feature.title}
             </h4>
-            <p className="text-xs text-gray-500 font-light">
+            <p className="text-[10px] sm:text-xs text-gray-500 font-light whitespace-nowrap">
               {feature.subtitle}
             </p>
           </div>
         ))}
       </div>
+
+      {/* 
+        Scrollbar छुपाने के लिए (Optionally) आप अपनी global CSS में यह जोड़ सकते हैं:
+        .scrollbar-hide::-webkit-scrollbar { display: none; }
+        .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+      */}
     </div>
   );
 };

@@ -74,14 +74,15 @@ export const ReShedule = ({ onClose, appointmentId, onSuccess }) => {
   return (
     // Backdrop / Overlay
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm px-4">
-      {/* Modal Container */}
-      <div className="bg-[#1a1a1a] w-full max-w-md rounded-2xl border border-gray-800 shadow-2xl overflow-hidden relative">
+      {/* Modal Container - ऐनिमेशन जोड़ा गया है */}
+      <div className="bg-[#1a1a1a] w-full max-w-md rounded-2xl border border-gray-800 shadow-2xl overflow-hidden relative animate-in fade-in zoom-in duration-200">
         {/* Top Glow - Pink Accent */}
         <div className="absolute top-0 inset-x-0 h-[2px] bg-gradient-to-r from-pink-600 via-pink-400 to-pink-600"></div>
 
         {/* Header */}
-        <div className="p-6 border-b border-gray-800 flex justify-between items-center bg-[#1a1a1a]">
-          <h2 className="text-lg font-medium text-white">
+        {/* मोबाइल के लिए p-4 और डेस्कटॉप के लिए sm:p-6 */}
+        <div className="p-4 sm:p-6 border-b border-gray-800 flex justify-between items-center bg-[#1a1a1a]">
+          <h2 className="text-base sm:text-lg font-medium text-white">
             Reschedule{" "}
             <span className="text-pink-500 font-semibold">Appointment</span>
           </h2>
@@ -94,7 +95,7 @@ export const ReShedule = ({ onClose, appointmentId, onSuccess }) => {
         </div>
 
         {/* Body - Inputs */}
-        <div className="p-6 space-y-6">
+        <div className="p-4 sm:p-6 space-y-5 sm:space-y-6">
           {/* Date Input */}
           <div>
             <label className="block text-[10px] font-medium text-gray-500 mb-2 uppercase tracking-widest">
@@ -105,7 +106,7 @@ export const ReShedule = ({ onClose, appointmentId, onSuccess }) => {
               value={data.date}
               name="date"
               type="date"
-              className={`w-full bg-[#111111] text-gray-200 text-sm rounded-xl px-4 py-3 outline-none transition-all [color-scheme:dark] cursor-pointer ${
+              className={`w-full bg-[#111111] text-gray-200 text-sm rounded-xl px-4 py-3 outline-none transition-all [color-scheme:dark] cursor-pointer appearance-none ${
                 errors.dateError
                   ? "border border-red-500/50 focus:border-red-500 focus:ring-1 focus:ring-red-500"
                   : "border border-gray-800 focus:border-pink-500 focus:ring-1 focus:ring-pink-500"
@@ -130,7 +131,7 @@ export const ReShedule = ({ onClose, appointmentId, onSuccess }) => {
               value={data.time}
               name="time"
               type="time"
-              className={`w-full bg-[#111111] text-gray-200 text-sm rounded-xl px-4 py-3 outline-none transition-all [color-scheme:dark] cursor-pointer ${
+              className={`w-full bg-[#111111] text-gray-200 text-sm rounded-xl px-4 py-3 outline-none transition-all [color-scheme:dark] cursor-pointer appearance-none ${
                 errors.timeError
                   ? "border border-red-500/50 focus:border-red-500 focus:ring-1 focus:ring-red-500"
                   : "border border-gray-800 focus:border-pink-500 focus:ring-1 focus:ring-pink-500"
@@ -147,16 +148,17 @@ export const ReShedule = ({ onClose, appointmentId, onSuccess }) => {
         </div>
 
         {/* Footer - Actions */}
-        <div className="p-5 border-t border-gray-800 flex gap-3 justify-end bg-[#111111]/50">
+        {/* मोबाइल पर बटन्स flex-col-reverse (ऊपर-नीचे) होंगे और चौड़ाई 100% होगी */}
+        <div className="p-4 sm:p-5 border-t border-gray-800 flex flex-col-reverse sm:flex-row gap-3 sm:justify-end bg-[#111111]/50">
           <button
             onClick={onClose}
-            className="px-5 py-2.5 bg-transparent border border-gray-700 text-gray-400 text-xs font-medium rounded-lg hover:bg-gray-800 hover:text-white transition-colors cursor-pointer"
+            className="w-full sm:w-auto px-5 py-3 sm:py-2.5 bg-transparent border border-gray-700 text-gray-400 text-xs font-medium rounded-lg hover:bg-gray-800 hover:text-white transition-colors cursor-pointer text-center"
           >
             Cancel
           </button>
           <button
             onClick={handleSubmit}
-            className="px-6 py-2.5 bg-pink-600 text-white text-xs font-medium rounded-lg hover:bg-pink-500 transition-all cursor-pointer shadow-[0_0_15px_rgba(236,72,153,0.2)] hover:shadow-[0_0_20px_rgba(236,72,153,0.4)]"
+            className="w-full sm:w-auto px-6 py-3 sm:py-2.5 bg-pink-600 text-white text-xs font-medium rounded-lg hover:bg-pink-500 transition-all cursor-pointer shadow-[0_0_15px_rgba(236,72,153,0.2)] hover:shadow-[0_0_20px_rgba(236,72,153,0.4)] text-center flex items-center justify-center"
           >
             Update
           </button>

@@ -56,12 +56,14 @@ export const TrendingProducts = () => {
   const trendingProducts = productsData.slice(0, 5);
 
   return (
-    <section className="bg-white font-sans py-20 lg:py-28 border-t border-gray-50">
-      <div className="max-w-6xl mx-auto px-6 lg:px-8">
-        {/* Section Header */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
+    // मोबाइल के लिए py-12 कर दिया गया है
+    <section className="bg-white font-sans py-12 md:py-20 lg:py-28 border-t border-gray-50">
+      {/* मोबाइल के लिए px-4 कर दिया गया है */}
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Section Header: मोबाइल पर सेंटर अलाइनमेंट के लिए flex-col और items-center */}
+        <div className="flex flex-col md:flex-row items-center md:items-end justify-between gap-4 md:gap-6 mb-10 md:mb-12 text-center md:text-left">
           <div>
-            <span className="text-xs font-medium tracking-[0.2em] text-pink-600 uppercase mb-3 block">
+            <span className="text-xs font-medium tracking-[0.2em] text-pink-600 uppercase mb-2 md:mb-3 block">
               Shop The Look
             </span>
             <h2 className="text-3xl lg:text-4xl font-light text-gray-900 tracking-tight">
@@ -73,7 +75,7 @@ export const TrendingProducts = () => {
           {/* View All Store Button */}
           <Link
             to={"shop"}
-            className="group flex items-center gap-2 text-sm font-medium text-gray-900 hover:text-pink-600 transition-colors pb-1 border-b border-gray-900 hover:border-pink-600 self-start md:self-end cursor-pointer"
+            className="group flex items-center gap-2 text-sm font-medium text-gray-900 hover:text-pink-600 transition-colors pb-1 border-b border-gray-900 hover:border-pink-600 cursor-pointer"
           >
             Visit Full Store
             <span className="transform group-hover:translate-x-1 transition-transform duration-300">
@@ -82,23 +84,24 @@ export const TrendingProducts = () => {
           </Link>
         </div>
 
-        {/* Product Grid (4 columns on Desktop) */}
+        {/* Product Grid */}
         {trendingProducts.length === 0 ? (
-          <div className="text-center py-10 text-gray-500">
+          <div className="text-center py-10 text-gray-500 text-sm md:text-base">
             No trending products available right now.
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-8 gap-y-12">
+          /* मोबाइल पर 2 कॉलम, डेस्कटॉप पर 5 कॉलम (ताकि 5 प्रोडक्ट्स एक लाइन में आएं) */
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-x-4 sm:gap-x-6 gap-y-8 md:gap-y-12">
             {trendingProducts.map((product) => (
               <div
                 key={product._id}
                 className="group flex flex-col relative cursor-pointer"
               >
                 {/* Product Image Container */}
-                <div className="w-full aspect-[4/5] bg-gray-50 rounded-xl overflow-hidden relative mb-5">
+                <div className="w-full aspect-[4/5] bg-gray-50 rounded-xl overflow-hidden relative mb-3 sm:mb-5">
                   {/* Badge */}
                   {product.badge && product.badge !== "None" && (
-                    <div className="absolute top-3 left-3 bg-black text-white text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-sm z-10">
+                    <div className="absolute top-2 left-2 sm:top-3 sm:left-3 bg-black text-white text-[9px] sm:text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-sm z-10">
                       {product.badge}
                     </div>
                   )}
@@ -109,44 +112,47 @@ export const TrendingProducts = () => {
                     className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-700 ease-in-out"
                   />
 
-                  {/* Hover Add To Cart Overlay */}
-                  <div className="absolute inset-x-0 bottom-0 p-4 opacity-0 group-hover:opacity-100 transform translate-y-4 group-hover:translate-y-0 transition-all duration-300 z-20">
+                  {/* Add To Cart Overlay */}
+                  {/* मोबाइल पर opacity-100 (हमेशा दिखेगा), डेस्कटॉप (sm) पर opacity-0 (होवर पर दिखेगा) */}
+                  <div className="absolute inset-x-0 bottom-0 p-2 sm:p-4 opacity-100 sm:opacity-0 group-hover:opacity-100 transform translate-y-0 sm:translate-y-4 group-hover:translate-y-0 transition-all duration-300 z-20">
                     <button
                       onClick={() => addedToCart(product._id)}
-                      className="w-full cursor-pointer bg-white/95 backdrop-blur-sm text-black text-sm font-medium py-3 rounded-lg shadow-lg hover:bg-black hover:text-white transition-colors duration-300"
+                      className="w-full cursor-pointer bg-white/95 backdrop-blur-sm text-black text-xs sm:text-sm font-medium py-2 sm:py-3 rounded-md sm:rounded-lg shadow-lg hover:bg-black hover:text-white transition-colors duration-300"
                     >
-                      Quick Add to Cart
+                      Add to Cart
                     </button>
                   </div>
                 </div>
 
-                {/* Product Details (Borderless & Clean) */}
+                {/* Product Details */}
                 <div className="flex flex-col flex-grow">
                   {/* Brand Name */}
-                  <span className="text-xs text-gray-400 font-medium uppercase tracking-widest mb-1">
+                  <span className="text-[10px] sm:text-xs text-gray-400 font-medium uppercase tracking-widest mb-1">
                     {product.brand}
                   </span>
 
                   {/* Product Name */}
-                  <h3 className="text-base font-medium text-gray-900 leading-snug mb-2 line-clamp-2">
+                  <h3 className="text-sm sm:text-base font-medium text-gray-900 leading-snug mb-1 sm:mb-2 line-clamp-2">
                     {product.productName}
                   </h3>
 
-                  {/* Ratings (Static for now, can be made dynamic later) */}
-                  <div className="flex items-center gap-1.5 mb-3">
-                    <span className="text-pink-500 text-xs">★★★★★</span>
-                    <span className="text-xs text-gray-400">
+                  {/* Ratings */}
+                  <div className="flex items-center gap-1.5 mb-2 sm:mb-3">
+                    <span className="text-pink-500 text-[10px] sm:text-xs">
+                      ★★★★★
+                    </span>
+                    <span className="text-[10px] sm:text-xs text-gray-400">
                       ({product.reviews || 0})
                     </span>
                   </div>
 
                   {/* Price Section */}
-                  <div className="flex items-center gap-2 mt-auto">
-                    <span className="text-lg font-semibold text-gray-900">
+                  <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 mt-auto">
+                    <span className="text-sm sm:text-lg font-semibold text-gray-900">
                       ₹{product.salePrice?.toLocaleString("en-IN")}
                     </span>
                     {product.originalPrice !== product.salePrice && (
-                      <span className="text-sm text-gray-400 line-through">
+                      <span className="text-[10px] sm:text-sm text-gray-400 line-through">
                         ₹{product.originalPrice?.toLocaleString("en-IN")}
                       </span>
                     )}
