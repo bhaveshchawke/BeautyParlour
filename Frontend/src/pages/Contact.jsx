@@ -1,4 +1,13 @@
+import { useMessage } from "../hooks/useMessage";
+
 export const Contact = () => {
+  const { showMessage } = useMessage();
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    showMessage("This feature is being processed", "success");
+  };
+
   return (
     // हल्का सा स्टोन (Stone) बैकग्राउंड ताकि बहुत ज्यादा सफेद न लगे
     <div className="bg-stone-50 min-h-screen font-sans pb-16 lg:pb-20">
@@ -90,7 +99,7 @@ export const Contact = () => {
             </h3>
 
             {/* यहाँ आप onSubmit लॉजिक लगा सकते हैं */}
-            <form className="flex flex-col gap-7">
+            <form className="flex flex-col gap-7" onSubmit={handleSubmit}>
               {/* Row 1: Name & Email */}
               <div className="flex flex-col sm:flex-row gap-7">
                 <div className="w-full relative group">
