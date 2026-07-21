@@ -5,7 +5,7 @@ const Product = require("../Models/productModel");
 const User = require("../Models/userModel");
 const Razorpay = require("razorpay");
 const crypto = require("crypto");
-const razorpayService = require("../services/razorpayService"); // Service import ki
+const razorpayService = require("../Services/razorpayService"); // Service import ki
 
 const deleteProductFromCart = async (req, res) => {
   const { id } = req.body;
